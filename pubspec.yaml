@@ -30,7 +30,8 @@ dependencies:
   email_validator: ^2.1.17
   page_transition: ^2.1.0
   intl:
-
+  uuid: 
+  http:
 
 
 dev_dependencies:

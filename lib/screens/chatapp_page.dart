@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/chatpage.dart';
 import 'package:matrimonial/services/user_service/chat_service.dart';
 
 final userProvider = Provider<User?>((ref) {
@@ -40,15 +41,14 @@ class ChatAppPage extends ConsumerWidget {
                   title: Text(user.displayName),
                   subtitle: Text(user.email),
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ChatPage(
-                    //       currentUser: currentUser,
-                    //       otherUser: user,
-                    //     ),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatPage(
+                          otherUser: user,
+                        ),
+                      ),
+                    );
                   },
                 );
               },
