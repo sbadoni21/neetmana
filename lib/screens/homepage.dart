@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/chatapp_page.dart';
 import 'package:matrimonial/screens/people_page.dart';
 import 'package:matrimonial/screens/profile_page.dart';
 import 'package:matrimonial/widget/bottomsheet.dart';
@@ -25,13 +26,13 @@ class _HomePageState extends ConsumerState<HomePage> {
   final List<Widget> _pages = [
     ProfilePage(),
     PeoplePage(),
-    ChatsPage(),
+    ChatAppPage(),
   ];
 
   @override
   void initState() {
     super.initState();
-    user = ref.read(userProvider); 
+    user = ref.read(userProvider);
   }
 
   @override
@@ -47,7 +48,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               _showSavedUsersBottomSheet(context, user!.uid);
             },
           ),
-            IconButton(
+          IconButton(
             icon: Icon(Icons.person_add),
             onPressed: () {
               _showFriendRequestBottomSheet(context, user!.uid);
@@ -89,21 +90,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
     );
   }
+
   void _showFriendRequestBottomSheet(BuildContext context, String userId) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return FriendRequestBottomSheet(userId: userId);
       },
-    );
-  }
-}
-
-class ChatsPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Chats Page'),
     );
   }
 }

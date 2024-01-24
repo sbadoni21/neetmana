@@ -21,9 +21,11 @@ class ChatService {
           users.add(user);
         }
 
+        print('My Contacts: $users');
         return users;
       }
 
+      print('No contacts found for user $currentUserUid');
       return [];
     } catch (e) {
       print('Error getting my contacts: $e');

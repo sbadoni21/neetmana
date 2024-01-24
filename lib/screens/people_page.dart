@@ -21,34 +21,44 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
   void initState() {
     super.initState();
     final user = ref.read(userProvider);
-    _usersFuture = UserService().getUsers(user!.uid, user.gender,);
+    _usersFuture = UserService().getUsers(user!.uid, user.gender);
+  }
+
+  Future<void> _refreshUsers() async {
+    final user = ref.read(userProvider);
+    setState(() {
+      _usersFuture = UserService().getUsers(user!.uid, user.gender);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: _usersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData ||
-              (snapshot.data as List<User>).isEmpty) {
-            return Center(child: Text('No users found.'));
-          } else {
-            List<User> users = snapshot.data as List<User>;
-            return ListView.builder(
-              itemCount: users.length,
-              itemBuilder: (context, index) {
-                return UserCard(
-                  user: users[index],
-                );
-              },
-            );
-          }
-        },
+      body: RefreshIndicator(
+        onRefresh: _refreshUsers,
+        child: FutureBuilder(
+          future: _usersFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData ||
+                (snapshot.data as List<User>).isEmpty) {
+              return Center(child: Text('No users found.'));
+            } else {
+              List<User> users = snapshot.data as List<User>;
+              return ListView.builder(
+                itemCount: users.length,
+                itemBuilder: (context, index) {
+                  return UserCard(
+                    user: users[index],
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
     );
   }
