@@ -182,4 +182,52 @@ class FriendRequestService {
           }).toList();
         });
   }
+   Future<void> addFriend(String currentUserUid, String friendUid) async {
+    try {
+      await _firestore.collection('users').doc(currentUserUid).update({
+        'myContacts': FieldValue.arrayUnion([friendUid]),
+      });
+
+      await _firestore.collection('users').doc(friendUid).update({
+        'myContacts': FieldValue.arrayUnion([currentUserUid]),
+      });
+    } catch (e) {
+      print('Error adding friend: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> removeFriend(String currentUserUid, String friendUid) async {
+    try {
+      await _firestore.collection('users').doc(currentUserUid).update({
+        'myContacts': FieldValue.arrayRemove([friendUid]),
+      });
+
+      await _firestore.collection('users').doc(friendUid).update({
+        'myContacts': FieldValue.arrayRemove([currentUserUid]),
+      });
+    } catch (e) {
+      print('Error removing friend: $e');
+      rethrow;
+    }
+  }
+   Future<bool> areFriends(String currentUserUid, String friendUid) async {
+    try {
+      final currentUserDoc =
+          await _firestore.collection('users').doc(currentUserUid).get();
+      final List<dynamic>? currentUserContacts =
+          currentUserDoc.data()?['myContacts'] as List<dynamic>?;
+
+      final friendUserDoc =
+          await _firestore.collection('users').doc(friendUid).get();
+      final List<dynamic>? friendUserContacts =
+          friendUserDoc.data()?['myContacts'] as List<dynamic>?;
+
+      return currentUserContacts?.contains(friendUid) == true &&
+          friendUserContacts?.contains(currentUserUid) == true;
+    } catch (e) {
+      print('Error checking friendship status: $e');
+      rethrow;
+    }
+  }
 }

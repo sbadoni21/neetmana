@@ -20,17 +20,37 @@ class OtherUserProfilePage extends ConsumerStatefulWidget {
 class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
   late bool friendRequestSent;
   User? currentUser;
-
+  bool isFriend = false; 
   @override
   void initState() {
     super.initState();
     friendRequestSent = false;
+    isFriend = false;
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     currentUser = ref.read(userProvider);
+    checkFriendshipStatus();
+  }
+
+  void checkFriendshipStatus() {
+    if (currentUser != null) {
+      final friendRequestService = FriendRequestService();
+      final isFriendFuture = friendRequestService.areFriends(
+        currentUser!.uid,
+        widget.user.uid,
+      );
+
+      isFriendFuture.then((value) {
+        setState(() {
+          isFriend = value;
+        });
+      }).catchError((error) {
+        print('Error checking friendship status: $error');
+      });
+    }
   }
 
   @override
@@ -48,15 +68,27 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
               backgroundImage: NetworkImage(widget.user.photoURL),
             ),
             ElevatedButton(
-              onPressed: friendRequestSent
+              onPressed: isFriend
                   ? () {
-                      _removeFriendRequest();
+                      // Handle action when they are already friends
+                      _unfriendAction();
                     }
-                  : () {
-                      _sendFriendRequest();
-                    },
-              child:
-                  Text(friendRequestSent ? 'Unsend Request' : 'Send Request'),
+                  : friendRequestSent
+                      ? () {
+                          // Handle action to remove friend request
+                          _removeFriendRequest();
+                        }
+                      : () {
+                          // Handle action to send friend request
+                          _sendFriendRequest();
+                        },
+              child: Text(
+                isFriend
+                    ? 'Unfriend'
+                    : friendRequestSent
+                        ? 'Unsend Request'
+                        : 'Send Request',
+              ),
             ),
             SizedBox(height: 20),
             _buildInfoRow('Display Name', widget.user.displayName),
@@ -113,6 +145,22 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
         });
       } catch (e) {
         print('Error removing friend request: $e');
+        // Handle error if needed
+      }
+    }
+  }
+
+  void _unfriendAction() {
+    final friendshipService = FriendRequestService();
+
+    if (currentUser != null) {
+      try {
+        friendshipService.removeFriend(currentUser!.uid, widget.user.uid);
+        setState(() {
+          isFriend = false;
+        });
+      } catch (e) {
+        print('Error unfriending user: $e');
         // Handle error if needed
       }
     }
