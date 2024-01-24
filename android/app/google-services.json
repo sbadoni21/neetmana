@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "17511096143",
+    "project_id": "matrimonailapp",
+    "storage_bucket": "matrimonailapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17511096143:android:cfb682af9e186a77012f3a",
+        "android_client_info": {
+          "package_name": "com.example.matrimonial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRXw_t6ZLhEkt2Y1a0NRX53_4tRm1Vc7I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

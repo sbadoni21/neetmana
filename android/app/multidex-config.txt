@@ -1,0 +1,3 @@
+-keep class your.package.name.** { *; }
+-keep class io.flutter.** { *; }
+-keep class com.google.firebase.** { *; }
