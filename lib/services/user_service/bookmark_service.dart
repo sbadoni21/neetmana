@@ -83,4 +83,19 @@ class BookmarkService {
       throw Exception("Error getting users by user IDs: $e");
     }
   }
+  Future<bool> isUserSaved(String currentUserUid, String otherUserUid) async {
+    try {
+      final userData = await _firestore.collection('users').doc(currentUserUid).get();
+      final List<dynamic>? savedUsers = userData.data()?['savedUsers'] as List<dynamic>?;
+
+      if (savedUsers != null && savedUsers.contains(otherUserUid)) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print('Error checking if user is saved: $e');
+      rethrow;
+    }
+  }
 }

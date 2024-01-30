@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:matrimonial/models/user_model.dart';
+import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/signupscreen.dart';
-import 'package:matrimonial/services/auth/authentication.dart';
-
-import 'package:firebase_auth/firebase_auth.dart' show User;
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:matrimonial/utils/static.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  AuthenticationServices authenticationService = AuthenticationServices();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,8 +104,9 @@ class _LoginPageState extends State<LoginPage> {
                     String password = passwordController.text.trim();
 
                     if (email.isNotEmpty && password.isNotEmpty) {
-                      User? user =
-                          await authenticationService.signIn(email, password);
+                      User? user = await ref
+                          .read(userStateNotifierProvider.notifier)
+                          .signIn(email, password);
 
                       if (user != null) {
                         Navigator.push(

@@ -30,14 +30,6 @@ class SavedUsersPage extends StatefulWidget {
 class _SavedUsersPageState extends State<SavedUsersPage> {
   final BookmarkService _bookmarkService = BookmarkService();
   late Future<List<User>> _savedUsersFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _savedUsersFuture = _bookmarkService.getSavedUsers(widget.userId);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

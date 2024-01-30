@@ -23,13 +23,14 @@ class UserStateNotifier extends StateNotifier<User?> {
     }
   }
 
-  Future<void> fetchUserData(String userId) async {
+ Future<User?> fetchUserData(String userId) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firestore.collection('users').doc(userId).get();
 
       if (snapshot.exists && snapshot.data() != null) {
         state = User.fromMap(snapshot.data()!);
+        return state;
       } else {
         state = null;
       }
@@ -37,6 +38,7 @@ class UserStateNotifier extends StateNotifier<User?> {
       state = null;
     }
   }
+
 
   Future<void> updateUserData(User updatedUser) async {
     try {
@@ -49,13 +51,14 @@ class UserStateNotifier extends StateNotifier<User?> {
     } catch (e) {}
   }
 
-  Future<void> signIn(String email, String password) async {
+
+    Future<User?> signIn(String email, String password) async {
     try {
       var firebaseUser = await ref
           .read(authenticationServicesProvider)
           .signIn(email, password);
       if (firebaseUser != null) {
-        await fetchUserData(firebaseUser.uid);
+        return await fetchUserData(firebaseUser.uid);
       } else {
         state = null;
       }
@@ -63,6 +66,8 @@ class UserStateNotifier extends StateNotifier<User?> {
       state = null; // Handle exceptions
     }
   }
+
+
 
   Future<void> signOut() async {
     try {
@@ -72,6 +77,7 @@ class UserStateNotifier extends StateNotifier<User?> {
       // Handle exceptions
     }
   }
+  
 }
 
 final userStateNotifierProvider =

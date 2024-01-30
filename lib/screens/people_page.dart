@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/services/user_service/user_service.dart';
+import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/user_card.dart';
 
 final userProvider = Provider<User?>((ref) {
@@ -32,8 +33,29 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final user = ref.read(userProvider);
     return Scaffold(
+      // appBar: AppBar(
+      //   title: Column(
+      //     crossAxisAlignment: CrossAxisAlignment.start,
+      //     children: [
+      //       Text("Welcome ${user!.displayName}"),
+      //       SizedBox(
+      //         height: 8,
+      //       ),
+      //       Text(
+      //         'Find your perfect match',
+      //         style: myTextStylefontsize14Black,
+      //       )
+      //     ],
+      //   ),
+      // ),
       body: RefreshIndicator(
         onRefresh: _refreshUsers,
         child: FutureBuilder(
@@ -51,8 +73,11 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
               return ListView.builder(
                 itemCount: users.length,
                 itemBuilder: (context, index) {
-                  return UserCard(
-                    user: users[index],
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                    child: UserCard(
+                      user: users[index],
+                    ),
                   );
                 },
               );

@@ -5,6 +5,8 @@ import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/chatapp_page.dart';
 import 'package:matrimonial/screens/people_page.dart';
 import 'package:matrimonial/screens/profile_page.dart';
+import 'package:matrimonial/screens/saved_preferences.dart';
+import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/bottomsheet.dart';
 import 'package:matrimonial/widget/friend_request_sheet.dart';
 
@@ -24,8 +26,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   User? user;
 
   final List<Widget> _pages = [
-    ProfilePage(),
     PeoplePage(),
+    SavedPreferences(),
+    ProfilePage(),
     ChatAppPage(),
   ];
 
@@ -40,16 +43,16 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('My Matrimonial App'),
+        title: const Text('My Matrimonial App'),
         actions: [
           IconButton(
-            icon: Icon(Icons.book),
+            icon: const Icon(Icons.book),
             onPressed: () {
               _showSavedUsersBottomSheet(context, user!.uid);
             },
           ),
           IconButton(
-            icon: Icon(Icons.person_add),
+            icon: const Icon(Icons.person_add),
             onPressed: () {
               _showFriendRequestBottomSheet(context, user!.uid);
             },
@@ -58,6 +61,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        fixedColor: bgColor,
+        backgroundColor: bgColor,
+        unselectedItemColor: Colors.black,
+        elevation: 2,
+        enableFeedback: true,
+        selectedFontSize: 20,
+        unselectedFontSize: 10,
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
@@ -66,12 +76,16 @@ class _HomePageState extends ConsumerState<HomePage> {
         },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.people),
             label: 'People',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bookmark_add),
+            label: 'Saved',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),

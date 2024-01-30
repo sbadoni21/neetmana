@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/services/user_service/friend_request_service.dart';
 
 final userProvider = Provider<User?>((ref) {
@@ -20,12 +21,16 @@ class OtherUserProfilePage extends ConsumerStatefulWidget {
 class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
   late bool friendRequestSent;
   User? currentUser;
-  bool isFriend = false; 
+  bool isFriend = false;
+  late bool isSaved = false;
+  final BookmarkService bookmarkService = BookmarkService();
+
   @override
   void initState() {
     super.initState();
     friendRequestSent = false;
     isFriend = false;
+    isSaved = false;
   }
 
   @override
@@ -33,6 +38,7 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
     super.didChangeDependencies();
     currentUser = ref.read(userProvider);
     checkFriendshipStatus();
+    checkSavedStatus();
   }
 
   void checkFriendshipStatus() {
@@ -53,6 +59,35 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
     }
   }
 
+  void checkSavedStatus() async {
+    final currentUser = ref.read(userProvider);
+    if (currentUser != null) {
+      final saved =
+          await bookmarkService.isUserSaved(currentUser.uid, widget.user.uid);
+      setState(() {
+        isSaved = saved;
+      });
+    }
+  }
+
+  void _onSaveButtonPressed() async {
+    if (currentUser != null) {
+      await bookmarkService.addSavedUser(currentUser!.uid, widget.user.uid);
+      setState(() {
+        isSaved = true;
+      });
+    }
+  }
+
+  void _onUnsaveButtonPressed() async {
+    if (currentUser != null) {
+      await bookmarkService.removeSavedUser(currentUser!.uid, widget.user.uid);
+      setState(() {
+        isSaved = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,31 +98,73 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
         child: ListView(
           padding: EdgeInsets.all(16),
           children: [
-            CircleAvatar(
-              radius: 150,
-              backgroundImage: NetworkImage(widget.user.photoURL),
-            ),
-            ElevatedButton(
-              onPressed: isFriend
-                  ? () {
-                      // Handle action when they are already friends
-                      _unfriendAction();
-                    }
-                  : friendRequestSent
-                      ? () {
-                          // Handle action to remove friend request
-                          _removeFriendRequest();
-                        }
-                      : () {
-                          // Handle action to send friend request
-                          _sendFriendRequest();
-                        },
-              child: Text(
-                isFriend
-                    ? 'Unfriend'
-                    : friendRequestSent
-                        ? 'Unsend Request'
-                        : 'Send Request',
+            Container(
+              width: double.infinity,
+              height: 194,
+              child: Row(
+                children: [
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(widget.user.photoURL),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Text(widget.user.displayName),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(widget.user.occupation),
+                            Text(widget.user.dob),
+                            Text(widget.user.currentLocation)
+                          ],
+                        ),
+                        ElevatedButton(
+                          onPressed: isFriend
+                              ? () {
+                                  _unfriendAction();
+                                }
+                              : friendRequestSent
+                                  ? () {
+                                      _removeFriendRequest();
+                                    }
+                                  : () {
+                                      _sendFriendRequest();
+                                    },
+                          child: Text(
+                            isFriend
+                                ? 'Unfriend'
+                                : friendRequestSent
+                                    ? 'Cancel Connect'
+                                    : 'Connect',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: isSaved
+                        ? Icon(Icons.bookmark, color: Colors.red)
+                        : Icon(Icons.bookmark_outline),
+                    onPressed: () {
+                      isSaved
+                          ? _onUnsaveButtonPressed()
+                          : _onSaveButtonPressed();
+                    },
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 20),

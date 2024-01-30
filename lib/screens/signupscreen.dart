@@ -28,7 +28,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController guardianNameController = TextEditingController();
   final TextEditingController guardianNumberController =
       TextEditingController();
-        final TextEditingController roleController = TextEditingController();
+  final TextEditingController roleController = TextEditingController();
 
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController occupationController = TextEditingController();
@@ -186,7 +186,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         height: 230,
                         width: 180,
                       ),
-                      Center(
+                      const Center(
                         child: Text(
                           "matrimonal",
                           style: TextStyle(
@@ -199,7 +199,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   _currentPage == 1
@@ -225,7 +225,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       elevation: 5.0,
                       backgroundColor: bgColor, // Background color
                       foregroundColor: Colors.white, // Text color
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                           horizontal: 45.0, vertical: 12.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -243,7 +243,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
+                      shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10))),
                       backgroundColor: Colors.white, // Text color
                       side: BorderSide(color: bgColor), // Border color
@@ -251,7 +251,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     child: Container(
                         width: 80,
                         alignment: Alignment.center,
-                        child: Text('Sign In')),
+                        child: const Text('Sign In')),
                   )
                 ],
               ),
@@ -275,7 +275,7 @@ class _SignUpPageState extends State<SignUpPage> {
         const SizedBox(height: 16),
         _buildGenderDropdown(),
         const SizedBox(height: 16),
-        _buildLookingForDropdown(),
+        _buildRoleForDropdown(),
         const SizedBox(height: 16),
         _buildTextField(
           controller: locationController,
@@ -500,6 +500,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Widget _buildGenderDropdown() {
     return DropdownButtonFormField<String>(
+      borderRadius: BorderRadius.circular(25),
       value: genderController.text.isNotEmpty ? genderController.text : null,
       onChanged: (String? newValue) {
         setState(() {
@@ -532,8 +533,9 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildLookingForDropdown() {
+  Widget _buildRoleForDropdown() {
     return DropdownButtonFormField<String>(
+      borderRadius: BorderRadius.circular(25),
       value: genderController.text.isNotEmpty ? genderController.text : null,
       onChanged: (String? newValue) {
         setState(() {
@@ -547,7 +549,7 @@ class _SignUpPageState extends State<SignUpPage> {
         );
       }).toList(),
       decoration: InputDecoration(
-        labelText: 'Gender',
+        labelText: 'Looking for',
         filled: true,
         fillColor: Colors.white,
         prefixIcon: Icon(Icons.people, color: Colors.grey),
@@ -559,7 +561,7 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please select gender';
+          return 'Please select the field';
         }
         return null;
       },

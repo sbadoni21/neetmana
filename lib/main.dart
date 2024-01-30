@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/splashscreen.dart';
+import 'package:matrimonial/utils/static.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async {
@@ -25,7 +26,7 @@ Future<void> main() async {
             appId: "1:17511096143:web:7a5690a0f27d1215012f3a",
             measurementId: "G-6J8Q73Y744"));
     logger.i("Firebase initialized successfully");
-    
+
     runApp(ProviderScope(child: MyApp()));
   } catch (e) {
     logger.e("Firebase initialization error: $e");
@@ -43,8 +44,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       title: 'Matrimonail',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryColor: bgColor,
       ),
       navigatorKey: navigatorKey,
       home: userState == null ? SplashScreen() : HomePage(),
