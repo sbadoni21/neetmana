@@ -4,6 +4,8 @@ import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/services/user_service/friend_request_service.dart';
+import 'package:matrimonial/utils/static.dart';
+import 'package:matrimonial/widget/heading_component.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);
@@ -88,104 +90,268 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
     }
   }
 
+  String calculateAgeString(String dob) {
+    List<String> dobParts = dob.split('/');
+    int day = int.parse(dobParts[0]);
+    int month = int.parse(dobParts[1]);
+    int year = int.parse(dobParts[2]);
+
+    DateTime today = DateTime.now();
+    DateTime birthDate = DateTime(year, month, day);
+
+    int age = today.year - birthDate.year;
+
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+
+    return age.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
+    String ageString = calculateAgeString(widget.user.dob);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.user.displayName),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text(
+          widget.user.displayName,
+          style: myTextStylefontsize24,
+        ),
+        backgroundColor: bgColor,
       ),
       body: Center(
         child: ListView(
-          padding: EdgeInsets.all(16),
           children: [
-            Container(
+            SizedBox(
               width: double.infinity,
-              height: 194,
-              child: Row(
+              height: 224,
+              child: Stack(
                 children: [
                   Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(widget.user.photoURL),
+                    width: double.infinity,
+                    height: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: bgColor,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(20),
+                            bottomRight: Radius.circular(20))),
+                  ),
+                  Positioned(
+                    left: 20,
+                    top: 40,
+                    child: Container(
+                      width: 144,
+                      height: 144,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(widget.user.photoURL),
+                        ),
                       ),
                     ),
                   ),
-                  Container(
-                    child: Column(
+                  Positioned(
+                    left: 180,
+                    top: 80,
+                    child: SizedBox(
+                      width: 120,
+                      child: Text(
+                        widget.user.displayName,
+                        style: myTextStylefontsize16white,
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 180,
+                    top: 120,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            Text(widget.user.displayName),
-                          ],
+                        Text(
+                          widget.user.occupation,
+                          style: myTextStylefontsize14White,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Text(widget.user.occupation),
-                            Text(widget.user.dob),
-                            Text(widget.user.currentLocation)
-                          ],
+                        SizedBox(
+                          width: 10,
                         ),
-                        ElevatedButton(
-                          onPressed: isFriend
-                              ? () {
-                                  _unfriendAction();
-                                }
-                              : friendRequestSent
-                                  ? () {
-                                      _removeFriendRequest();
-                                    }
-                                  : () {
-                                      _sendFriendRequest();
-                                    },
-                          child: Text(
-                            isFriend
-                                ? 'Unfriend'
-                                : friendRequestSent
-                                    ? 'Cancel Connect'
-                                    : 'Connect',
-                          ),
+                        Text(
+                          '$ageString years',
+                          style: myTextStylefontsize14White,
                         ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          widget.user.currentLocation,
+                          style: myTextStylefontsize14White,
+                        )
                       ],
                     ),
                   ),
-                  IconButton(
-                    icon: isSaved
-                        ? Icon(Icons.bookmark, color: Colors.red)
-                        : Icon(Icons.bookmark_outline),
-                    onPressed: () {
-                      isSaved
-                          ? _onUnsaveButtonPressed()
-                          : _onSaveButtonPressed();
-                    },
+                  Positioned(
+                    right: 20,
+                    top: 75,
+                    child: IconButton(
+                      icon: isSaved
+                          ? Icon(Icons.bookmark, color: Colors.white)
+                          : Icon(Icons.bookmark_outline, color: Colors.white),
+                      onPressed: () {
+                        isSaved
+                            ? _onUnsaveButtonPressed()
+                            : _onSaveButtonPressed();
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    right: 30,
+                    top: 155,
+                    child: ElevatedButton(
+                      onPressed: isFriend
+                          ? () {
+                              _unfriendAction();
+                            }
+                          : friendRequestSent
+                              ? () {
+                                  _removeFriendRequest();
+                                }
+                              : () {
+                                  _sendFriendRequest();
+                                },
+                      child: Text(
+                        isFriend
+                            ? 'Unfriend'
+                            : friendRequestSent
+                                ? 'Cancel Connect'
+                                : 'Connect',
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
             SizedBox(height: 20),
-            _buildInfoRow('Display Name', widget.user.displayName),
-            SizedBox(height: 10),
-            _buildInfoRow('Email', widget.user.email),
-            SizedBox(height: 10),
-            _buildInfoRow('Phone Number', widget.user.phoneNumber),
-            SizedBox(height: 10),
-            _buildInfoRow('Status', widget.user.status),
-            SizedBox(height: 10),
-            _buildInfoRow('Gender', widget.user.gender),
-            SizedBox(height: 10),
-            _buildInfoRow('Occupation', widget.user.occupation),
-            SizedBox(height: 10),
-            _buildInfoRow('Current Location', widget.user.currentLocation),
-            SizedBox(height: 10),
-            _buildInfoRow('Date of Birth', widget.user.dob),
-            SizedBox(height: 10),
-            _buildInfoRow('Native Village', widget.user.nativeVillage),
-            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+              child: HeadingTitle(title: 'Images'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+
+            // FutureBuilder(
+            //         future: fetchFeaturedCollectionData(),
+            //         builder: (context, snapshot) {
+            //           if (snapshot.connectionState == ConnectionState.waiting) {
+            //             return const Center(child: CircularProgressIndicator());
+            //           } else if (snapshot.hasError) {
+            //             return Center(child: Text('Error: ${snapshot.error}'));
+            //           } else {
+            //             List<Course> featuredCourses =
+            //                 snapshot.data as List<Course>;
+
+            //             return SizedBox(
+            //               height: 170,
+            //               child: featuredCourses.isNotEmpty
+            //                   ? ListView.builder(
+            //                       scrollDirection: Axis.horizontal,
+            //                       itemCount: featuredCourses.length,
+            //                       itemBuilder: (context, index) {
+            //                         Course course = featuredCourses[index];
+            //                         return GestureDetector(
+            //                           onTap: () {
+            //                             Navigator.push(
+            //                               context,
+            //                               MaterialPageRoute(
+            //                                 builder: (context) =>
+            //                                     CourseDetailPage(
+            //                                         courses: course),
+            //                               ),
+            //                             );
+            //                           },
+            //                           child: Padding(
+            //                             padding: const EdgeInsets.only(
+            //                                 left: 8.0, right: 8),
+            //                             child: Tiles(course: course),
+            //                           ),
+            //                         );
+            //                       },
+            //                     )
+            //                   : const Text("No featured courses available."),
+            //             );
+            //           }
+            //         },
+            //       ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+              child: Card(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      HeadingTitle(title: 'Career'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text('Occupation  :  '),
+                          Text(widget.user.occupation)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text('Qualification  :  '),
+                          Text(widget.user.occupation)
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+              child: Card(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      HeadingTitle(title: 'Family Background'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Text('Village  :  '),
+                          Text(widget.user.nativeVillage)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Text('Father Name  :  '),
+                          Text(widget.user.guardianName)
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

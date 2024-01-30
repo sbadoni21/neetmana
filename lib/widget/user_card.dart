@@ -89,16 +89,17 @@ class _UserCardState extends ConsumerState<UserCard> {
                 height: 100,
                 width: 120,
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.elliptical(50, 50),
-                      topRight: Radius.elliptical(50, 50)),
-                  child: Image.network(
-                    widget.user.photoURL,
-                    fit: BoxFit.fill,
-                  ),
-                )),
+                    borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.elliptical(50, 50),
+                        topRight: Radius.elliptical(50, 50)),
+                    child: widget.user.photoURL != "none"
+                        ? Image.network(
+                            widget.user.photoURL,
+                            fit: BoxFit.fill,
+                          )
+                        : Image.asset('assets/images/placeholder_image.png'))),
             const SizedBox(
               width: 10,
             ),

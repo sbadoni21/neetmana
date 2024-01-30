@@ -9,6 +9,7 @@ import 'package:matrimonial/screens/saved_preferences.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/bottomsheet.dart';
 import 'package:matrimonial/widget/friend_request_sheet.dart';
+import 'package:matrimonial/widget/heading_component.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);
@@ -42,17 +43,18 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: bgColor,
         automaticallyImplyLeading: false,
-        title: const Text('My Matrimonial App'),
+        title: Text(
+          'NeetiMana JeevanSaathi',
+          style: myTextStylefontsize24,
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.book),
-            onPressed: () {
-              _showSavedUsersBottomSheet(context, user!.uid);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.person_add),
+            icon: const Icon(
+              Icons.person_add,
+              color: Colors.white,
+            ),
             onPressed: () {
               _showFriendRequestBottomSheet(context, user!.uid);
             },
@@ -93,15 +95,6 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-    );
-  }
-
-  void _showSavedUsersBottomSheet(BuildContext context, String userId) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SavedUsersBottomSheet(userId: userId);
-      },
     );
   }
 

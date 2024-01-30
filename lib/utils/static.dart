@@ -4,7 +4,7 @@ const appid = "1003bc2dcfbd4826afc05b71813bbe4a";
 const token =
     "007eJxTYHhst3nqJP9z4irFDosLus5MEeA49GF1bmJGmHB82/bNjXkKDIYGBsZJyUYpyWlJKSYWRmaJackGpknmhhaGxklJqSaJMdOmpzYEMjJEVTgwMTJAIIjPwlCSWlzCwAAAQd8fOQ==";
 
-const bgColor = Colors.redAccent;
+const bgColor = Color.fromRGBO(200, 30, 20, 1);
 const cardColor = Color.fromRGBO(240, 243, 248, 1);
 const black = Colors.black;
 //text styles
@@ -69,7 +69,7 @@ TextStyle myTextStylefontsize16white = TextStyle(
   fontFamily: 'Urbanist',
   fontSize: 16.0,
   fontStyle: FontStyle.normal,
-  fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w400,
   color: Colors.white,
 );
 
