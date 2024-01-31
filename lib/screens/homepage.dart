@@ -8,6 +8,7 @@ import 'package:matrimonial/screens/profile_page.dart';
 import 'package:matrimonial/screens/saved_preferences.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/bottomsheet.dart';
+import 'package:matrimonial/widget/custom_bottom_navbar.dart';
 import 'package:matrimonial/widget/friend_request_sheet.dart';
 import 'package:matrimonial/widget/heading_component.dart';
 
@@ -62,38 +63,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         ],
       ),
       body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        fixedColor: bgColor,
-        backgroundColor: bgColor,
-        unselectedItemColor: Colors.black,
-        elevation: 2,
-        enableFeedback: true,
-        selectedFontSize: 20,
-        unselectedFontSize: 10,
+      bottomNavigationBar: CustomBottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: 'People',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_add),
-            label: 'Saved',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chats',
-          ),
-        ],
       ),
     );
   }
@@ -106,4 +82,13 @@ class _HomePageState extends ConsumerState<HomePage> {
       },
     );
   }
+}
+
+void _showFriendRequestBottomSheet(BuildContext context, String userId) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return FriendRequestBottomSheet(userId: userId);
+    },
+  );
 }

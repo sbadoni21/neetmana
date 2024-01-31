@@ -56,7 +56,15 @@ class _SignUpPageState extends State<SignUpPage> {
           });
         }
       } else {
-        print('Permission denied by the user.');
+        final XFile? pickedFile = await _imagePicker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 85,
+        );
+        if (pickedFile != null) {
+          setState(() {
+            _userImage = File(pickedFile.path);
+          });
+        }
       }
     } else {
       final XFile? pickedFile = await _imagePicker.pickImage(

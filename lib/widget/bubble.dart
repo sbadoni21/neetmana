@@ -11,7 +11,7 @@ class Bubble extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
-        color: Color.fromRGBO(82, 125, 89, 1),
+        color: Color.fromRGBO(226, 38, 128, 1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

@@ -33,57 +33,77 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final user = ref.read(userProvider);
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Column(
-      //     crossAxisAlignment: CrossAxisAlignment.start,
-      //     children: [
-      //       Text("Welcome ${user!.displayName}"),
-      //       SizedBox(
-      //         height: 8,
-      //       ),
-      //       Text(
-      //         'Find your perfect match',
-      //         style: myTextStylefontsize14Black,
-      //       )
-      //     ],
-      //   ),
-      // ),
-      body: RefreshIndicator(
-        onRefresh: _refreshUsers,
-        child: FutureBuilder(
-          future: _usersFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else if (!snapshot.hasData ||
-                (snapshot.data as List<User>).isEmpty) {
-              return Center(child: Text('No users found.'));
-            } else {
-              List<User> users = snapshot.data as List<User>;
-              return ListView.builder(
-                itemCount: users.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                    child: UserCard(
-                      user: users[index],
-                    ),
-                  );
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20.0, 10, 20, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  "Welcome ...",
+                  style: myTextStylefontsize24BGCOLOR,
+                  textAlign: TextAlign.left,
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  "${user!.displayName}",
+                  style: myTextStylefontsize24Black,
+                ),
+                SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  'Find your perfect match',
+                  style: myTextStylefontsize20BGCOLOR,
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _refreshUsers,
+              child: FutureBuilder(
+                future: _usersFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData ||
+                      (snapshot.data as List<User>).isEmpty) {
+                    return Center(child: Text('No users found.'));
+                  } else {
+                    List<User> users = snapshot.data as List<User>;
+                    return ListView.builder(
+                      itemCount: users.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+                          child: UserCard(
+                            user: users[index],
+                          ),
+                        );
+                      },
+                    );
+                  }
                 },
-              );
-            }
-          },
-        ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

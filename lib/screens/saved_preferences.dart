@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/services/user_service/bookmark_service.dart';
+import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/saved_preference_tile.dart.dart';
 
 final userProvider = Provider<User?>((ref) {
@@ -41,7 +42,10 @@ class _SavedPreferencesState extends ConsumerState<SavedPreferences> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Saved Preferences'),
+        title: Text(
+          'Saved Preferences',
+          style: myTextStylefontsize24Black,
+        ),
       ),
       body: FutureBuilder<List<User>>(
         future: _savedUsersFuture,

@@ -68,7 +68,8 @@ class _SavedPreferenceTilesState extends State<SavedPreferenceTiles> {
                     bottomLeft: Radius.circular(50),
                     bottomRight: Radius.circular(50)),
                 image: DecorationImage(
-                  image: widget.user.photoURL.isNotEmpty
+                  image: (widget.user.photoURL.isNotEmpty &&
+                          widget.user.photoURL != 'none')
                       ? NetworkImage(widget.user.photoURL)
                       : AssetImage('assets/images/placeholder_image.png')
                           as ImageProvider,
