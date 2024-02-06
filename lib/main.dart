@@ -42,7 +42,7 @@ class MyApp extends ConsumerWidget {
     );
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Matrimonail',
+      title: 'Niti Mana JeevanSaathi',
       theme: ThemeData(
         primaryColor: bgColor,
       ),

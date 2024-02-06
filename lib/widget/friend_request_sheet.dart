@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonial/models/user_model.dart';
-import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/services/user_service/friend_request_service.dart';
 import 'package:matrimonial/widget/friend_request_card.dart';
 
@@ -60,7 +59,7 @@ class _FriendRequestPageState extends State<FriendRequestPage> {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final user = snapshot.data![index];
-                return RequestCard(user: user); // Use your RequestCard widget
+                return RequestCard(user: user); 
               },
             );
           }

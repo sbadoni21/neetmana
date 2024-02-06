@@ -310,7 +310,7 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                                 );
                               },
                             )
-                          : const Text("No featured courses available."),
+                          : const Center(child: Text('No Images added')),
                     );
                   }
                 },

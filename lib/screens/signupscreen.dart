@@ -41,7 +41,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
   final GlobalKey<FormState> _thirdPageKey = GlobalKey<FormState>();
   int _currentPage = 1;
   String? _selectedDate;
-   bool _isLoading = false; 
+  bool _isLoading = false;
   final ImagePicker _imagePicker = ImagePicker();
 
   Future<void> _selectImage() async {
@@ -133,67 +133,80 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
       });
     }
   }
-Future<void> _submitForm() async {
-  if (_thirdPageKey.currentState?.validate() ?? false) {
 
+  Future<void> _submitForm() async {
+    if (_thirdPageKey.currentState?.validate() ?? false) {
+      try {
+        setState(() {
+          _isLoading = true;
+        });
+        String selectedGender =
+            genderController.text.isNotEmpty ? genderController.text : 'Male';
+        String selectedRole =
+            roleController.text.isNotEmpty ? roleController.text : 'Self';
 
+        User? user =
+            await ref.read(userStateNotifierProvider.notifier).signInWithEmail(
+                  name: fullNameController.text,
+                  email: emailController.text,
+                  password: passwordController.text,
+                  currentLocation: locationController.text,
+                  gender: selectedGender,
+                  role: selectedRole,
+                  guardianName: guardianNameController.text,
+                  guardianNumber: guardianNumberController.text,
+                  occupation: occupationController.text,
+                  dob: dobController.text,
+                  authImage: _authImage,
+                  education: educationController.text,
+                  userImage: _userImage,
+                  nativeVillage: nativeVillageController.text,
+                  phoneNumber: phoneNumberController.text,
+                );
 
+        educationController.clear();
+        fullNameController.clear();
+        locationController.clear();
+        emailController.clear();
+        passwordController.clear();
+        retypePasswordController.clear();
+        genderController.clear();
+        guardianNameController.clear();
+        guardianNumberController.clear();
+        occupationController.clear();
+        dobController.clear();
+        nativeVillageController.clear();
+        _userImage = null;
+        _authImage = null;
 
-    String selectedGender = genderController.text.isNotEmpty
-        ? genderController.text
-        : 'Male'; 
-    String selectedRole = roleController.text.isNotEmpty
-        ? roleController.text
-        : 'Self'; 
-
-    User? user = await ref
-        .read(userStateNotifierProvider.notifier)
-        .signInWithEmail(
-          name: fullNameController.text,
-          email: emailController.text,
-          password: passwordController.text,
-          currentLocation: locationController.text,
-          gender: selectedGender,
-          role: selectedRole,
-          guardianName: guardianNameController.text,
-          guardianNumber: guardianNumberController.text,
-          occupation: occupationController.text,
-          dob: dobController.text,
-          authImage: _authImage,
-          education: educationController.text,
-          userImage: _userImage,
-          nativeVillage: nativeVillageController.text,
-          phoneNumber: phoneNumberController.text,
+        setState(() {
+          _isLoading = false;
+        });
+        if (user != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Error has been encountered"),
+            ),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Error has been encountered"),
+          ),
         );
-
-    if (user != null) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Error has been encountered"),
-        ),
-      );
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
-    educationController.clear();
-    fullNameController.clear();
-    locationController.clear();
-    emailController.clear();
-    passwordController.clear();
-    retypePasswordController.clear();
-    genderController.clear();
-    guardianNameController.clear();
-    guardianNumberController.clear();
-    occupationController.clear();
-    dobController.clear();
-    nativeVillageController.clear();
-    _userImage = null;
-    _authImage = null;
   }
-}
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -220,7 +233,7 @@ Future<void> _submitForm() async {
                       ),
                       const Center(
                         child: Text(
-                          "NeetiMana JeevanSaathi",
+                          "NitiMana JeevanSaathi",
                           style: TextStyle(
                             color: bgColor,
                             fontSize: 24,
@@ -239,30 +252,34 @@ Future<void> _submitForm() async {
                           ? _buildSecondPageFields()
                           : _buildThirdPageFields(),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _currentPage == 1
-                        ? _submitFirstPage
-                        : _currentPage == 2
-                            ? _submitSecondPage
-                            : _submitForm,
-                    child: Text(
-                      _currentPage == 1
-                          ? "Next"
-                          : _currentPage == 2
-                              ? "Next"
-                              : "Submit",
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      elevation: 5.0,
-                      backgroundColor: bgColor, // Background color
-                      foregroundColor: Colors.white, // Text color
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 45.0, vertical: 12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
+                  // ElevatedButton(
+                  //   onPressed: _currentPage == 1
+                  //       ? _submitFirstPage
+                  //       : _currentPage == 2
+                  //           ? _submitSecondPage
+                  //           : _submitForm,
+                  //   child: Text(
+                  //     _currentPage == 1
+                  //         ? "Next"
+                  //         : _currentPage == 2
+                  //             ? "Next"
+                  //             : "Submit",
+                  //   ),
+                  //   style: ElevatedButton.styleFrom(
+                  //     elevation: 5.0,
+                  //     backgroundColor: bgColor, // Background color
+                  //     foregroundColor: Colors.white, // Text color
+                  //     padding: const EdgeInsets.symmetric(
+                  //         horizontal: 45.0, vertical: 12.0),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(10.0),
+                  //     ),
+                  //   ),
+                  // ),
+
+                  const SizedBox(height: 16),
+                  _buildButton(),
+
                   SizedBox(height: 16.0),
                   OutlinedButton(
                     onPressed: () {
@@ -434,7 +451,7 @@ Future<void> _submitForm() async {
             ),
             child: _authImage != null
                 ? Image.file(
-                    _userImage!,
+                    _authImage!,
                     fit: BoxFit.cover,
                   )
                 : const Column(
@@ -573,9 +590,7 @@ Future<void> _submitForm() async {
   Widget _buildRoleDropdown() {
     return DropdownButtonFormField<String>(
       borderRadius: BorderRadius.circular(25),
-      value: roleController.text.isNotEmpty
-          ? roleController.text
-          : 'Self',
+      value: roleController.text.isNotEmpty ? roleController.text : 'Self',
       onChanged: (String? newValue) {
         setState(() {
           roleController.text = newValue ?? 'Self';
@@ -637,5 +652,34 @@ Future<void> _submitForm() async {
         return null;
       },
     );
+  }
+
+  Widget _buildButton() {
+    return _isLoading
+        ? CircularProgressIndicator()
+        : ElevatedButton(
+            onPressed: _currentPage == 1
+                ? _submitFirstPage
+                : _currentPage == 2
+                    ? _submitSecondPage
+                    : _submitForm,
+            child: Text(
+              _currentPage == 1
+                  ? "Next"
+                  : _currentPage == 2
+                      ? "Next"
+                      : "Submit",
+            ),
+            style: ElevatedButton.styleFrom(
+              elevation: 5.0,
+              backgroundColor: bgColor,
+              foregroundColor: Colors.white,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 45.0, vertical: 12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+          );
   }
 }

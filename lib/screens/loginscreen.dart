@@ -32,7 +32,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const Center(
                       child: Text(
-                    'NeetiMana JeevanSaathi',
+                    'NitiMana JeevanSaathi',
                     style: TextStyle(
                       color: bgColor,
                       fontSize: 24,

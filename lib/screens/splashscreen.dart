@@ -29,7 +29,7 @@ class SplashScreen extends ConsumerWidget {
             width: double.infinity,
             alignment: Alignment.center,
             child: const Text(
-              "NeetiMana JeevanSaathi",
+              "NitiMana JeevanSaathi",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
