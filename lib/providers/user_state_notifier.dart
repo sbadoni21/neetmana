@@ -92,7 +92,7 @@ extension on User {
       'displayName': displayName,
       'email': email,
       'phoneNumber': phoneNumber,
-      'profilephoto': photoURL,
+      'photo': photoURL,
       'status': status,
       'gender': gender,
       'uid': uid,
@@ -103,7 +103,8 @@ extension on User {
       'guardianName': guardianName,
       'guardianNumber': guardianNumber,
       'occupation': occupation,
-      'role': role
+      'role': role,
+      'userImages': userImages
     };
   }
 }

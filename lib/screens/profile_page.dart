@@ -1,13 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/splashscreen.dart';
+import 'package:matrimonial/services/user_service/image_upload_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/heading_component.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);
+});
+final imageServiceProvider = ChangeNotifierProvider<ImageServices>((ref) {
+  return ImageServices();
 });
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -15,6 +23,7 @@ class ProfilePage extends ConsumerStatefulWidget {
   _ProfilePageState createState() => _ProfilePageState();
 }
 
+final ImagePicker _imagePicker = ImagePicker();
 String calculateAgeString(String dob) {
   List<String> dobParts = dob.split('/');
   int day = int.parse(dobParts[0]);
@@ -34,11 +43,104 @@ String calculateAgeString(String dob) {
   return age.toString();
 }
 
+Future<void> _selectImage(ref) async {
+  var status = await Permission.storage.status;
+  final user = ref.watch(userProvider);
+
+  if (!status.isGranted) {
+    if (await Permission.storage.request().isGranted) {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+      if (pickedFile != null) {
+        ref
+            .read((imageServiceProvider).notifier)
+            .setImage(File(pickedFile.path));
+      }
+    } else {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+      if (pickedFile != null) {
+        ref
+            .read((imageServiceProvider.notifier))
+            .setImage(File(pickedFile.path), user.uid);
+      }
+    }
+  } else {
+    final XFile? pickedFile = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (pickedFile != null) {
+      ref
+          .read((imageServiceProvider.notifier))
+          .setImage(File(pickedFile.path), user.uid);
+    }
+  }
+}
+
+Future<void> _showDeleteImageDialog(
+    String imageUrl, context, String userId) async {
+  return showDialog(
+    context: context,
+    builder: (
+      BuildContext context,
+    ) {
+      return AlertDialog(
+        backgroundColor: Colors.white70,
+        elevation: 5,
+        shadowColor: Colors.black,
+        title: Text(
+          "Delete Image",
+          style: myTextStylefontsize20BGCOLOR,
+        ),
+        content: ClipRect(
+          child: Container(
+            width: 500,
+            height: 500,
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                fit: BoxFit.fitHeight,
+                image: NetworkImage(imageUrl),
+              ),
+            ),
+          ),
+        ),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text(
+              "Cancel",
+              style: myTextStylefontsize14Black,
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await ImageServices().removeImage(userId, imageUrl);
+
+              Navigator.of(context).pop();
+            },
+            child: Text("Delete", style: myTextStylefontsize14Black),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(userProvider);
-
+    final imageServices = ref.watch(imageServiceProvider);
     return Scaffold(
       body: Center(
         child: ListView(
@@ -149,50 +251,264 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             const SizedBox(
               height: 20,
             ),
+            FutureBuilder(
+              future: imageServices.getUserImages(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  List<String> fetchedImages = snapshot.data as List<String>;
 
-            // FutureBuilder(
-            //         future: fetchFeaturedCollectionData(),
-            //         builder: (context, snapshot) {
-            //           if (snapshot.connectionState == ConnectionState.waiting) {
-            //             return const Center(child: CircularProgressIndicator());
-            //           } else if (snapshot.hasError) {
-            //             return Center(child: Text('Error: ${snapshot.error}'));
-            //           } else {
-            //             List<Course> featuredCourses =
-            //                 snapshot.data as List<Course>;
-
-            //             return SizedBox(
-            //               height: 170,
-            //               child: featuredCourses.isNotEmpty
-            //                   ? ListView.builder(
-            //                       scrollDirection: Axis.horizontal,
-            //                       itemCount: featuredCourses.length,
-            //                       itemBuilder: (context, index) {
-            //                         Course course = featuredCourses[index];
-            //                         return GestureDetector(
-            //                           onTap: () {
-            //                             Navigator.push(
-            //                               context,
-            //                               MaterialPageRoute(
-            //                                 builder: (context) =>
-            //                                     CourseDetailPage(
-            //                                         courses: course),
-            //                               ),
-            //                             );
-            //                           },
-            //                           child: Padding(
-            //                             padding: const EdgeInsets.only(
-            //                                 left: 8.0, right: 8),
-            //                             child: Tiles(course: course),
-            //                           ),
-            //                         );
-            //                       },
-            //                     )
-            //                   : const Text("No featured courses available."),
-            //             );
-            //           }
-            //         },
-            //       ),
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: SizedBox(
+                      height: 150,
+                      child: fetchedImages.isNotEmpty
+                          ? ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: fetchedImages.length,
+                              itemBuilder: (context, index) {
+                                String image = fetchedImages[index];
+                                return index != fetchedImages.length - 1
+                                    ? GestureDetector(
+                                        // onTap: () {
+                                        //   Navigator.push(
+                                        //     context,
+                                        //     MaterialPageRoute(
+                                        //       builder: (context) =>
+                                        //           CourseDetailPage(
+                                        //               courses: course),
+                                        //     ),
+                                        //   );
+                                        // },
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5, right: 5),
+                                          child: SizedBox(
+                                            width: 90,
+                                            height: 90,
+                                            child: Stack(
+                                              children: [
+                                                ClipRect(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.rectangle,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      image: DecorationImage(
+                                                        fit: BoxFit.fitHeight,
+                                                        image:
+                                                            NetworkImage(image),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  top: 0,
+                                                  right: 0,
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      _showDeleteImageDialog(
+                                                          image,
+                                                          context,
+                                                          user.uid);
+                                                    },
+                                                    icon: const Icon(
+                                                        Icons.close_outlined,
+                                                        color: Colors.red,
+                                                        fill: 1,
+                                                        weight: 10),
+                                                    iconSize: 20,
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Row(
+                                        children: [
+                                          GestureDetector(
+                                            // onTap: () {
+                                            //   Navigator.push(
+                                            //     context,
+                                            //     MaterialPageRoute(
+                                            //       builder: (context) =>
+                                            //           CourseDetailPage(
+                                            //               courses: course),
+                                            //     ),
+                                            //   );
+                                            // },
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 5, right: 5),
+                                              child: SizedBox(
+                                                width: 90,
+                                                height: 150,
+                                                child: Stack(
+                                                  children: [
+                                                    ClipRect(
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          shape: BoxShape
+                                                              .rectangle,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(10),
+                                                          image:
+                                                              DecorationImage(
+                                                            fit: BoxFit
+                                                                .fitHeight,
+                                                            image: NetworkImage(
+                                                                image),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      top: 0,
+                                                      right: 0,
+                                                      child: IconButton(
+                                                        onPressed: () {
+                                                          _showDeleteImageDialog(
+                                                              image,
+                                                              context,
+                                                              user.uid);
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons
+                                                                .close_outlined,
+                                                            color: Colors.red,
+                                                            fill: 1,
+                                                            weight: 10),
+                                                        iconSize: 20,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          index < 3
+                                              ? Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10),
+                                                  child: Container(
+                                                    width: 90,
+                                                    height: 140,
+                                                    child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                            elevation: 5,
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10))),
+                                                        onPressed: () {
+                                                          _selectImage(ref);
+                                                        },
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Icon(
+                                                              Icons.add,
+                                                              size: 50,
+                                                            ),
+                                                            Text(
+                                                              "Add ",
+                                                              style:
+                                                                  myTextStylefontsize12Black,
+                                                            ),
+                                                            index <
+                                                                    fetchedImages
+                                                                            .length -
+                                                                        1
+                                                                ? Text(
+                                                                    "Images ",
+                                                                    style:
+                                                                        myTextStylefontsize12Black,
+                                                                  )
+                                                                : Text(
+                                                                    "Image ",
+                                                                    style:
+                                                                        myTextStylefontsize12Black,
+                                                                  ),
+                                                          ],
+                                                        )),
+                                                  ),
+                                                )
+                                              : Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10),
+                                                  child: Container(
+                                                    width: 100,
+                                                    height: 140,
+                                                    child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                            elevation: 5,
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10))),
+                                                        onPressed: () {},
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            const Icon(
+                                                              Icons.delete,
+                                                              size: 50,
+                                                            ),
+                                                            Text(
+                                                              "Remove",
+                                                              style:
+                                                                  myTextStylefontsize12Black,
+                                                            ),
+                                                            index <
+                                                                    fetchedImages
+                                                                            .length -
+                                                                        1
+                                                                ? Text(
+                                                                    "Image ",
+                                                                    style:
+                                                                        myTextStylefontsize12Black,
+                                                                  )
+                                                                : Text(
+                                                                    "Image ",
+                                                                    style:
+                                                                        myTextStylefontsize12Black,
+                                                                  ),
+                                                          ],
+                                                        )),
+                                                  ),
+                                                )
+                                        ],
+                                      );
+                              },
+                            )
+                          : const Text("No featured courses available."),
+                    ),
+                  );
+                }
+              },
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
               child: Card(

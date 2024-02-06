@@ -62,7 +62,7 @@ class signup_service {
           'email': email,
           'displayName': name,
           'status': 'Online',
-          'profilephoto': userPhotoURL ?? "none",
+          'photo': userPhotoURL ?? "none",
           'authphoto': authPhotoURL ?? "none",
           'deviceToken': deviceToken,
           'gender': gender,

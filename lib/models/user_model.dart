@@ -16,6 +16,7 @@ class User {
   final String guardianNumber;
   final String occupation;
   final List? savedUsers;
+  final List? userImages;
 
   User(
       {required this.deviceToken,
@@ -34,6 +35,7 @@ class User {
       required this.guardianName,
       required this.occupation,
       this.savedUsers,
+      this.userImages,
       required this.guardianNumber});
 
   factory User.fromMap(Map<String, dynamic> map) {
@@ -41,12 +43,13 @@ class User {
         deviceToken: map['deviceToken'] ?? '',
         displayName: map['displayName'] ?? '',
         email: map['email'] ?? '',
-        role:map['role']?? '',
+        role: map['role'] ?? '',
         authImage: map['authphoto'],
         phoneNumber: map['phoneNumber'] ?? '',
-        photoURL: map['profilephoto'] ?? '',
+        photoURL: map['photo'] ?? '',
         status: map['status'] ?? '',
         gender: map['gender'] ?? '',
+        userImages: List<String>.from(map['userImages'] ?? []),
         uid: map['uid'] ?? '',
         currentLocation: map['currentLocation'] ?? '',
         dob: map['dob'] ?? "",
