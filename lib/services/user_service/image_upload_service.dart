@@ -71,7 +71,6 @@ class ImageServices extends ChangeNotifier {
 
   Future<void> addImage(String currentUserId, String imageUrl) async {
     try {
-      print('$currentUserId $imageUrl');
       DocumentReference userRef =
           _firestore.collection('users').doc(currentUserId);
       DocumentSnapshot userSnapshot = await userRef.get();

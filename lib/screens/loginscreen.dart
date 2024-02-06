@@ -25,26 +25,29 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: Column(
                 children: [
                   Image.asset(
-                    "assets/images/placeholder_image.png",
+                    logo,
                     fit: BoxFit.contain,
-                    height: 230,
-                    width: 180,
+                    height: 240,
+                    width: 240,
                   ),
-                  Center(
+                  const Center(
                       child: Text(
-                    "Matrimonial",
+                    'NeetiMana JeevanSaathi',
                     style: TextStyle(
                       color: bgColor,
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
                     ),
                   )),
+                  SizedBox(
+                    height: 20,
+                  )
                 ],
               ),
             ),
             Column(
               children: [
-                Container(
+                const SizedBox(
                   width: double.infinity,
                   child: Text(
                     "Login",
@@ -54,7 +57,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         fontWeight: FontWeight.w600),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 TextField(
@@ -62,36 +65,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   decoration: InputDecoration(
                     labelText: 'Email',
                     hintText: 'Enter your email',
-                    prefixIcon: Icon(Icons.email, color: Colors.grey),
+                    prefixIcon: const Icon(Icons.email, color: Colors.grey),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: bgColor),
+                      borderSide: const BorderSide(color: bgColor),
                     ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 14.0),
                   ),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 TextField(
                   controller: passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     hintText: 'Enter your password',
-                    prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.grey),
                     filled: true,
                     fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: bgColor),
+                      borderSide: const BorderSide(color: bgColor),
                     ),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 14.0),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
               ],
@@ -125,15 +128,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     elevation: 5.0,
                     backgroundColor: bgColor, // Background color
                     foregroundColor: Colors.white, // Text color
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 45.0, vertical: 12.0),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 45.0, vertical: 12.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
-                SizedBox(height: 16.0),
+                const SizedBox(height: 16.0),
                 // ElevatedButton(
                 //   onPressed: () async {
                 //     User? user = await authenticationService.signInWithGoogle();
@@ -182,15 +185,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     );
                   },
                   style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
+                    shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10))),
                     backgroundColor: Colors.white, // Text color
-                    side: BorderSide(color: bgColor), // Border color
+                    side: const BorderSide(color: bgColor), // Border color
                   ),
                   child: Container(
                       width: 80,
                       alignment: Alignment.center,
-                      child: Text('Sign Up')),
+                      child: const Text('Sign Up')),
                 )
               ],
             )

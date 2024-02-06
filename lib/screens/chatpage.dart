@@ -10,6 +10,7 @@ import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/image_fullscreen_page.dart';
 import 'package:matrimonial/services/user_service/chat_service.dart';
+import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/chatbubble.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
@@ -115,17 +116,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
           elevation: 0,
           flexibleSpace: Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.white.withOpacity(0.8),
-                  Colors.white,
-                ],
-                stops: const [0.0, 1],
-              ),
-            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -138,14 +128,13 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       color: Colors.blue,
                     )),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                   child: Center(
                     child: CircleAvatar(
                       backgroundImage: widget.otherUser.photoURL != null
                           ? NetworkImage(widget.otherUser.photoURL!)
                               as ImageProvider // Cast to ImageProvider
-                          : AssetImage(
-                              'assets/image6.png'), // Use a placeholder image
+                          : AssetImage(''), // Use a placeholder image
                       radius: 20,
                       // Adjust the size as needed
                     ),
@@ -200,57 +189,44 @@ class _ChatPageState extends ConsumerState<ChatPage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+            child: TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))),
+                hintText: "Type Text Here",
+                hintStyle:
+                    TextStyle(color: Colors.grey), // Set text color to black
               ),
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
-                  prefixIcon: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.attach_file,
-                      color: Colors.blueAccent,
-                    ),
-                  ),
-
-                  hintStyle:
-                      TextStyle(color: Colors.black), // Set text color to black
-                ),
-                controller: _messageController,
-                obscureText: false,
-                style:
-                    TextStyle(color: Colors.black), // Set text color to black
-              ),
+              controller: _messageController,
+              obscureText: false,
+              style: TextStyle(color: Colors.black), // Set text color to black
             ),
           )),
           Padding(
-            padding: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(10),
             child: Row(
               children: [
-                IconButton(
-                  onPressed: () => getImage(),
-                  icon: Icon(
-                    Icons.photo,
-                    color: Colors.blueAccent,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => requestCameraPermission(),
-                  icon: Icon(
-                    Icons.photo_camera,
-                    color: Colors.blueAccent,
-                  ),
-                ),
+                // IconButton(
+                //   onPressed: () => getImage(),
+                //   icon: Icon(
+                //     Icons.photo,
+                //     color: Colors.blueAccent,
+                //   ),
+                // ),
+                // IconButton(
+                //   onPressed: () => requestCameraPermission(),
+                //   icon: Icon(
+                //     Icons.photo_camera,
+                //     color: Colors.blueAccent,
+                //   ),
+                // ),
                 Container(
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
                     borderRadius:
                         BorderRadius.circular(50), // Define the border radius
-                    color: Colors.blue, // Set the background color
+                    color: bgColor, // Set the background color
                   ),
                   child: IconButton(
                     onPressed: () async {
@@ -300,7 +276,7 @@ class _ChatPageState extends ConsumerState<ChatPage> {
       return Container(
         alignment: alignment,
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.fromLTRB(12, 2, 12, 2),
           child: Column(
             crossAxisAlignment: (data['senderId'] == currentUser.uid)
                 ? CrossAxisAlignment.end
@@ -320,7 +296,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
     } else if (data['type'] == 'Image') {
       return Container(
         alignment: alignment,
-        // Expand horizontally
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(

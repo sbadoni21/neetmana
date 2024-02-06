@@ -197,14 +197,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           await ref
                               .read(userStateNotifierProvider.notifier)
                               .signOut();
-                          Navigator.pop(
+                          Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) => SplashScreen()));
                         },
                         child: Text(
                           "SignOut",
-                          style: myTextStylefontsize12Black,
+                          style: myTextStylefontsize12bgcolor,
                         ),
                       ),
                     ),
@@ -257,7 +257,40 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Container(
+                      width: 90,
+                      height: 140,
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              elevation: 5,
+                              backgroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          onPressed: () {
+                            _selectImage(ref);
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.add,
+                                size: 50,
+                              ),
+                              Text(
+                                "Add ",
+                                style: myTextStylefontsize12Black,
+                              ),
+                              Text(
+                                "Image ",
+                                style: myTextStylefontsize12Black,
+                              ),
+                            ],
+                          )),
+                    ),
+                  );
                 } else {
                   List<String> fetchedImages = snapshot.data as List<String>;
 
@@ -503,14 +536,56 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                       );
                               },
                             )
-                          : const Text("No featured courses available."),
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: SizedBox(
+                                    height: 140,
+                                    width: 140,
+                                    child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            elevation: 5,
+                                            backgroundColor: Colors.white,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10))),
+                                        onPressed: () {
+                                          _selectImage(ref);
+                                        },
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.add,
+                                              size: 50,
+                                            ),
+                                            Text(
+                                              "Add ",
+                                              style: myTextStylefontsize12Black,
+                                            ),
+                                            Text(
+                                              "Images ",
+                                              style: myTextStylefontsize12Black,
+                                            )
+                                          ],
+                                        )),
+                                  ),
+                                ),
+                              ],
+                            ),
                     ),
                   );
                 }
               },
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20.0, 20, 20, 0),
               child: Card(
                 color: Colors.white,
                 child: Padding(
@@ -532,16 +607,16 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       Row(
                         children: [
                           const Text('Qualification  :  '),
-                          Text(user.occupation)
+                          Text(user.education)
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
             ),
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
@@ -565,8 +640,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       ),
                       Row(
                         children: [
-                          const Text('Father Name  :  '),
+                          const Text('Guardian Name  :  '),
                           Text(user.guardianName)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('Guardian Number  :  '),
+                          Text(user.guardianNumber)
                         ],
                       )
                     ],

@@ -42,6 +42,7 @@ class _SavedPreferencesState extends ConsumerState<SavedPreferences> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: Text(
           'Saved Preferences',
           style: myTextStylefontsize24Black,

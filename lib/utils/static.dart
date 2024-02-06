@@ -54,7 +54,7 @@ TextStyle myTextStylefontsize24BGCOLOR = TextStyle(
   fontFamily: 'Urbanist',
   fontSize: 24.0,
   fontStyle: FontStyle.normal,
-  fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w400,
   color: bgColor,
 );
 TextStyle myTextStylefontsize24Black = TextStyle(
@@ -70,6 +70,13 @@ TextStyle myTextStylefontsize20BGCOLOR = TextStyle(
   fontStyle: FontStyle.normal,
   fontWeight: FontWeight.w600,
   color: bgColor,
+);
+TextStyle myTextStylefontsize20White = TextStyle(
+  fontFamily: 'Urbanist',
+  fontSize: 20.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w400,
+  color: Colors.white,
 );
 
 TextStyle myTextStylefontsize16white = TextStyle(
@@ -94,4 +101,13 @@ TextStyle myTextStylefontsize12white = TextStyle(
   fontWeight: FontWeight.w400,
   color: Colors.white,
 );
-const ChatGPT = "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";
+TextStyle myTextStylefontsize12bgcolor = TextStyle(
+  fontFamily: 'Urbanist',
+  fontSize: 12.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w400,
+  color: bgColor,
+);
+
+
+const logo = "assets/images/logo.png";

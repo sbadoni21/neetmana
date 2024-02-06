@@ -21,7 +21,7 @@ class SplashScreen extends ConsumerWidget {
       splash: ListView(
         children: [
           Image.asset(
-            "assets/images/placeholder_image.png",
+            logo,
             height: 270,
             width: 270,
           ),
@@ -29,7 +29,7 @@ class SplashScreen extends ConsumerWidget {
             width: double.infinity,
             alignment: Alignment.center,
             child: const Text(
-              "Matrimonial",
+              "NeetiMana JeevanSaathi",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
@@ -41,8 +41,8 @@ class SplashScreen extends ConsumerWidget {
       ),
       splashIconSize: 350,
       centered: true,
-      nextScreen: userState == null ? LoginPage() : HomePage(),
-      splashTransition: SplashTransition.scaleTransition,
+      nextScreen: userState == null ? LoginPage() : const HomePage(),
+      splashTransition: SplashTransition.fadeTransition,
       pageTransitionType: PageTransitionType.bottomToTop,
       backgroundColor: bgColor,
     ));

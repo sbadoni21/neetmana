@@ -44,12 +44,26 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 75,
         backgroundColor: bgColor,
         automaticallyImplyLeading: false,
-        title: Text(
-          'NeetiMana JeevanSaathi',
-          style: myTextStylefontsize24,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Niti Mana',
+              style: myTextStylefontsize20White,
+            ),
+            Text(
+              'JeevanSaathi',
+              style: myTextStylefontsize16white,
+            ),
+          ],
         ),
+        leading: Image.asset(
+          logo,
+        ),
+        leadingWidth: 100,
         actions: [
           IconButton(
             icon: const Icon(

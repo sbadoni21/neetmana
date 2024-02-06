@@ -40,12 +40,9 @@ class _UserCardState extends ConsumerState<UserCard> {
     int day = int.parse(dobParts[0]);
     int month = int.parse(dobParts[1]);
     int year = int.parse(dobParts[2]);
-
     DateTime today = DateTime.now();
     DateTime birthDate = DateTime(year, month, day);
-
     int age = today.year - birthDate.year;
-
     if (today.month < birthDate.month ||
         (today.month == birthDate.month && today.day < birthDate.day)) {
       age--;

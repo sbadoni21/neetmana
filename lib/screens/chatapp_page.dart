@@ -4,6 +4,9 @@ import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/chatpage.dart';
 import 'package:matrimonial/services/user_service/chat_service.dart';
+import 'package:matrimonial/utils/static.dart';
+import 'package:matrimonial/widget/chat_cards.dart';
+import 'package:matrimonial/widget/user_card.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);
@@ -21,7 +24,8 @@ class ChatAppPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Contacts'),
+        automaticallyImplyLeading: false,
+        title: Text('My Contacts', style: myTextStylefontsize24BGCOLOR),
       ),
       body: FutureBuilder<List<User>>(
         future: chatService.getMyContacts(currentUser?.uid ?? ''),
@@ -37,19 +41,23 @@ class ChatAppPage extends ConsumerWidget {
               itemCount: snapshot.data!.length,
               itemBuilder: (context, index) {
                 final user = snapshot.data![index];
-                return ListTile(
-                  title: Text(user.displayName),
-                  subtitle: Text(user.email),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatPage(
-                          otherUser: user,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatPage(
+                            otherUser: user,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                    child: ChatCard(
+                      user: user,
+                    ),
+                  ),
                 );
               },
             );

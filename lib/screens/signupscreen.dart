@@ -1,21 +1,22 @@
 import 'dart:io';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:matrimonial/models/user_model.dart';
+import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/loginscreen.dart';
-import 'package:matrimonial/services/auth/signupservices.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class SignUpPage extends StatefulWidget {
+class SignUpPage extends ConsumerStatefulWidget {
   @override
   _SignUpPageState createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends ConsumerState<SignUpPage> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController locationController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -29,6 +30,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController guardianNumberController =
       TextEditingController();
   final TextEditingController roleController = TextEditingController();
+  final TextEditingController educationController = TextEditingController();
 
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController occupationController = TextEditingController();
@@ -39,7 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _thirdPageKey = GlobalKey<FormState>();
   int _currentPage = 1;
   String? _selectedDate;
-
+   bool _isLoading = false; 
   final ImagePicker _imagePicker = ImagePicker();
 
   Future<void> _selectImage() async {
@@ -83,26 +85,34 @@ class _SignUpPageState extends State<SignUpPage> {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
       if (await Permission.storage.request().isGranted) {
-        final XFile? pickedFile = await _imagePicker.pickImage(
+        final XFile? pickedFileauth = await _imagePicker.pickImage(
           source: ImageSource.gallery,
           imageQuality: 85,
         );
-        if (pickedFile != null) {
+        if (pickedFileauth != null) {
           setState(() {
-            _userImage = File(pickedFile.path);
+            _authImage = File(pickedFileauth.path);
           });
         }
       } else {
-        print('Permission denied by the user.');
+        final XFile? pickedFileauth = await _imagePicker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 85,
+        );
+        if (pickedFileauth != null) {
+          setState(() {
+            _authImage = File(pickedFileauth.path);
+          });
+        }
       }
     } else {
-      final XFile? pickedFile = await _imagePicker.pickImage(
+      final XFile? pickedFileauth = await _imagePicker.pickImage(
         source: ImageSource.gallery,
         imageQuality: 85,
       );
-      if (pickedFile != null) {
+      if (pickedFileauth != null) {
         setState(() {
-          _userImage = File(pickedFile.path);
+          _authImage = File(pickedFileauth.path);
         });
       }
     }
@@ -123,53 +133,67 @@ class _SignUpPageState extends State<SignUpPage> {
       });
     }
   }
+Future<void> _submitForm() async {
+  if (_thirdPageKey.currentState?.validate() ?? false) {
 
-  Future<void> _submitForm() async {
-    if (_thirdPageKey.currentState?.validate() ?? false) {
-      User? user = await signup_service().registerUser(
+
+
+
+    String selectedGender = genderController.text.isNotEmpty
+        ? genderController.text
+        : 'Male'; 
+    String selectedRole = roleController.text.isNotEmpty
+        ? roleController.text
+        : 'Self'; 
+
+    User? user = await ref
+        .read(userStateNotifierProvider.notifier)
+        .signInWithEmail(
           name: fullNameController.text,
           email: emailController.text,
           password: passwordController.text,
           currentLocation: locationController.text,
-          gender: genderController.text,
-          role: roleController.text,
+          gender: selectedGender,
+          role: selectedRole,
           guardianName: guardianNameController.text,
           guardianNumber: guardianNumberController.text,
           occupation: occupationController.text,
           dob: dobController.text,
-          nativeVillage: nativeVillageController.text,
-          userImage: _userImage,
           authImage: _authImage,
-          phoneNumber: phoneNumberController.text);
-
-      if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          education: educationController.text,
+          userImage: _userImage,
+          nativeVillage: nativeVillageController.text,
+          phoneNumber: phoneNumberController.text,
         );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Error has been encountered"),
-          ),
-        );
-      }
 
-      fullNameController.clear();
-      locationController.clear();
-      emailController.clear();
-      passwordController.clear();
-      retypePasswordController.clear();
-      genderController.clear();
-      guardianNameController.clear();
-      guardianNumberController.clear();
-      occupationController.clear();
-      dobController.clear();
-      nativeVillageController.clear();
-      _userImage = null;
+    if (user != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error has been encountered"),
+        ),
+      );
     }
+    educationController.clear();
+    fullNameController.clear();
+    locationController.clear();
+    emailController.clear();
+    passwordController.clear();
+    retypePasswordController.clear();
+    genderController.clear();
+    guardianNameController.clear();
+    guardianNumberController.clear();
+    occupationController.clear();
+    dobController.clear();
+    nativeVillageController.clear();
+    _userImage = null;
+    _authImage = null;
   }
-
+}
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -189,14 +213,14 @@ class _SignUpPageState extends State<SignUpPage> {
                   Column(
                     children: [
                       Image.asset(
-                        "assets/images/placeholder_image.png",
+                        logo,
                         fit: BoxFit.contain,
                         height: 230,
                         width: 180,
                       ),
                       const Center(
                         child: Text(
-                          "matrimonal",
+                          "NeetiMana JeevanSaathi",
                           style: TextStyle(
                             color: bgColor,
                             fontSize: 24,
@@ -206,9 +230,8 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
                   const SizedBox(
-                    height: 16,
+                    height: 5,
                   ),
                   _currentPage == 1
                       ? _buildFirstPageFields()
@@ -283,7 +306,7 @@ class _SignUpPageState extends State<SignUpPage> {
         const SizedBox(height: 16),
         _buildGenderDropdown(),
         const SizedBox(height: 16),
-        _buildRoleForDropdown(),
+        _buildRoleDropdown(),
         const SizedBox(height: 16),
         _buildTextField(
           controller: locationController,
@@ -316,7 +339,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     _userImage!,
                     fit: BoxFit.cover,
                   )
-                : Column(
+                : const Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.camera_alt, color: Colors.blue),
@@ -409,7 +432,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 color: Colors.blue,
               ),
             ),
-            child: _userImage != null
+            child: _authImage != null
                 ? Image.file(
                     _userImage!,
                     fit: BoxFit.cover,
@@ -438,6 +461,12 @@ class _SignUpPageState extends State<SignUpPage> {
           hintText: 'Enter your contact number',
           icon: Icons.email,
         ),
+        const SizedBox(height: 16),
+        _buildTextField(
+            controller: educationController,
+            labelText: " Qualification",
+            hintText: "Latest Educational Qualification",
+            icon: Icons.cast_for_education),
         const SizedBox(height: 16),
         _buildTextField(
           controller: emailController,
@@ -509,10 +538,10 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget _buildGenderDropdown() {
     return DropdownButtonFormField<String>(
       borderRadius: BorderRadius.circular(25),
-      value: genderController.text.isNotEmpty ? genderController.text : null,
+      value: genderController.text.isNotEmpty ? genderController.text : 'Male',
       onChanged: (String? newValue) {
         setState(() {
-          genderController.text = newValue ?? '';
+          genderController.text = newValue ?? 'Male';
         });
       },
       items: ['Male', 'Female'].map<DropdownMenuItem<String>>((String value) {
@@ -541,13 +570,15 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  Widget _buildRoleForDropdown() {
+  Widget _buildRoleDropdown() {
     return DropdownButtonFormField<String>(
       borderRadius: BorderRadius.circular(25),
-      value: genderController.text.isNotEmpty ? genderController.text : null,
+      value: roleController.text.isNotEmpty
+          ? roleController.text
+          : 'Self',
       onChanged: (String? newValue) {
         setState(() {
-          genderController.text = newValue ?? '';
+          roleController.text = newValue ?? 'Self';
         });
       },
       items: ['Self', 'Someone'].map<DropdownMenuItem<String>>((String value) {

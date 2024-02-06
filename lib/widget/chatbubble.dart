@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:matrimonial/utils/static.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart';
 
@@ -34,11 +35,10 @@ class ChatBubble extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: seen ? Colors.blue : Colors.greenAccent),
+                borderRadius: BorderRadius.circular(20), color: bgColor),
             child: Text(
               message,
-              style: const TextStyle(fontSize: 18, color: Colors.white),
+              style: const TextStyle(fontSize: 15, color: Colors.white),
             ),
           ),
           Container(

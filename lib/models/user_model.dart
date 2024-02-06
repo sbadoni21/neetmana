@@ -15,6 +15,8 @@ class User {
   final String guardianName;
   final String guardianNumber;
   final String occupation;
+  final String education;
+
   final List? savedUsers;
   final List? userImages;
 
@@ -28,6 +30,7 @@ class User {
       required this.status,
       required this.dob,
       required this.uid,
+      required this.education,
       required this.role,
       required this.nativeVillage,
       required this.gender,
@@ -43,13 +46,14 @@ class User {
         deviceToken: map['deviceToken'] ?? '',
         displayName: map['displayName'] ?? '',
         email: map['email'] ?? '',
+        education: map['education'] ?? "",
         role: map['role'] ?? '',
         authImage: map['authphoto'],
         phoneNumber: map['phoneNumber'] ?? '',
         photoURL: map['photo'] ?? '',
         status: map['status'] ?? '',
         gender: map['gender'] ?? '',
-        userImages: List<String>.from(map['userImages'] ?? []),
+        userImages: List<String>.from(map['myImages'] ?? []),
         uid: map['uid'] ?? '',
         currentLocation: map['currentLocation'] ?? '',
         dob: map['dob'] ?? "",

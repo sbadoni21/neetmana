@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,7 +25,7 @@ class UserStateNotifier extends StateNotifier<User?> {
     }
   }
 
- Future<User?> fetchUserData(String userId) async {
+  Future<User?> fetchUserData(String userId) async {
     try {
       DocumentSnapshot<Map<String, dynamic>> snapshot =
           await _firestore.collection('users').doc(userId).get();
@@ -39,7 +41,6 @@ class UserStateNotifier extends StateNotifier<User?> {
     }
   }
 
-
   Future<void> updateUserData(User updatedUser) async {
     try {
       await _firestore
@@ -51,8 +52,7 @@ class UserStateNotifier extends StateNotifier<User?> {
     } catch (e) {}
   }
 
-
-    Future<User?> signIn(String email, String password) async {
+  Future<User?> signIn(String email, String password) async {
     try {
       var firebaseUser = await ref
           .read(authenticationServicesProvider)
@@ -67,8 +67,6 @@ class UserStateNotifier extends StateNotifier<User?> {
     }
   }
 
-
-
   Future<void> signOut() async {
     try {
       await ref.read(authenticationServicesProvider).signOut();
@@ -77,7 +75,57 @@ class UserStateNotifier extends StateNotifier<User?> {
       // Handle exceptions
     }
   }
-  
+
+  Future<User?> signInWithEmail({
+    required String name,
+    required String email,
+    required String password,
+    required String currentLocation,
+    required String gender,
+    required String role,
+    required String guardianName,
+    required String guardianNumber,
+    required String occupation,
+    required String education,
+    required String dob,
+    required String nativeVillage,
+    required String phoneNumber,
+    File? userImage,
+    File? authImage,
+  }) async {
+    try {
+      var firebaseUser = await ref
+          .read(authenticationServicesProvider)
+          .registerUser(
+              currentLocation: currentLocation,
+              dob: dob,
+              email: email,
+              gender: gender,
+              guardianName: guardianName,
+              guardianNumber: guardianNumber,
+              name: name,
+              education: education,
+              nativeVillage: nativeVillage,
+              occupation: occupation,
+              password: password,
+              phoneNumber: phoneNumber,
+              role: role,
+              authImage: authImage,
+              userImage: userImage);
+      if (firebaseUser != null) {
+        User? user = await fetchUserData(firebaseUser.uid);
+        print(
+            'helllpppppp sdadsasdasdadsasdadasdadasd    ${firebaseUser.uid}   ');
+        return user;
+      } else {
+        state = null;
+        return null;
+      }
+    } catch (e) {
+      state = null;
+      return null;
+    }
+  }
 }
 
 final userStateNotifierProvider =
@@ -104,7 +152,7 @@ extension on User {
       'guardianNumber': guardianNumber,
       'occupation': occupation,
       'role': role,
-      'userImages': userImages
+      'myImages': userImages
     };
   }
 }

@@ -4,11 +4,15 @@ import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/services/user_service/friend_request_service.dart';
+import 'package:matrimonial/services/user_service/image_upload_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/heading_component.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);
+});
+final imageServiceProvider = ChangeNotifierProvider<ImageServices>((ref) {
+  return ImageServices();
 });
 
 class OtherUserProfilePage extends ConsumerStatefulWidget {
@@ -112,6 +116,7 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
   @override
   Widget build(BuildContext context) {
     String ageString = calculateAgeString(widget.user.dob);
+    final imageServices = ref.watch(imageServiceProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -127,7 +132,7 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
           children: [
             SizedBox(
               width: double.infinity,
-              height: 224,
+              height: 250,
               child: Stack(
                 children: [
                   Container(
@@ -232,61 +237,85 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                       ),
                     ),
                   ),
+                  Positioned(
+                      right: 120,
+                      top: 221,
+                      child: Text(
+                        ' Profile Maintained by ${widget.user.role} ',
+                        style: myTextStylefontsize14White,
+                      )),
                 ],
               ),
             ),
-            SizedBox(height: 20),
-            Padding(
+            const SizedBox(height: 20),
+            const Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
               child: HeadingTitle(title: 'Images'),
             ),
             SizedBox(
               height: 20,
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 5, 20, 5),
+              child: FutureBuilder(
+                future: imageServices.getUserImages(widget.user.uid),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('No Images added'));
+                  } else {
+                    List<String> fetchedImages = snapshot.data as List<String>;
 
-            // FutureBuilder(
-            //         future: fetchFeaturedCollectionData(),
-            //         builder: (context, snapshot) {
-            //           if (snapshot.connectionState == ConnectionState.waiting) {
-            //             return const Center(child: CircularProgressIndicator());
-            //           } else if (snapshot.hasError) {
-            //             return Center(child: Text('Error: ${snapshot.error}'));
-            //           } else {
-            //             List<Course> featuredCourses =
-            //                 snapshot.data as List<Course>;
-
-            //             return SizedBox(
-            //               height: 170,
-            //               child: featuredCourses.isNotEmpty
-            //                   ? ListView.builder(
-            //                       scrollDirection: Axis.horizontal,
-            //                       itemCount: featuredCourses.length,
-            //                       itemBuilder: (context, index) {
-            //                         Course course = featuredCourses[index];
-            //                         return GestureDetector(
-            //                           onTap: () {
-            //                             Navigator.push(
-            //                               context,
-            //                               MaterialPageRoute(
-            //                                 builder: (context) =>
-            //                                     CourseDetailPage(
-            //                                         courses: course),
-            //                               ),
-            //                             );
-            //                           },
-            //                           child: Padding(
-            //                             padding: const EdgeInsets.only(
-            //                                 left: 8.0, right: 8),
-            //                             child: Tiles(course: course),
-            //                           ),
-            //                         );
-            //                       },
-            //                     )
-            //                   : const Text("No featured courses available."),
-            //             );
-            //           }
-            //         },
-            //       ),
+                    return SizedBox(
+                      height: 170,
+                      child: fetchedImages.isNotEmpty
+                          ? ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: fetchedImages.length,
+                              itemBuilder: (context, index) {
+                                String image = fetchedImages[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    _showImageDialog(
+                                      image,
+                                      context,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 5, right: 5),
+                                    child: SizedBox(
+                                      width: 90,
+                                      height: 90,
+                                      child: Stack(
+                                        children: [
+                                          ClipRect(
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.rectangle,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                image: DecorationImage(
+                                                  fit: BoxFit.fitHeight,
+                                                  image: NetworkImage(image),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                          : const Text("No featured courses available."),
+                    );
+                  }
+                },
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),
               child: Card(
@@ -310,7 +339,7 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                       Row(
                         children: [
                           Text('Qualification  :  '),
-                          Text(widget.user.occupation)
+                          Text(widget.user.education)
                         ],
                       )
                     ],
@@ -343,8 +372,14 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                       ),
                       Row(
                         children: [
-                          Text('Father Name  :  '),
+                          Text('Guardian Name  :  '),
                           Text(widget.user.guardianName)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('Guardian Number  :  '),
+                          Text(widget.user.guardianNumber)
                         ],
                       )
                     ],
@@ -407,6 +442,51 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
         // Handle error if needed
       }
     }
+  }
+
+  Future<void> _showImageDialog(String imageUrl, context) async {
+    return showDialog(
+      context: context,
+      builder: (
+        BuildContext context,
+      ) {
+        return AlertDialog(
+          backgroundColor: Colors.white70,
+          elevation: 5,
+          shadowColor: Colors.black,
+          title: Text(
+            widget.user.displayName,
+            style: myTextStylefontsize20BGCOLOR,
+          ),
+          content: ClipRect(
+            child: Container(
+              width: 500,
+              height: 500,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  fit: BoxFit.fitHeight,
+                  image: NetworkImage(imageUrl),
+                ),
+              ),
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.spaceBetween,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Cancel",
+                style: myTextStylefontsize14Black,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildInfoRow(String label, String value) {
