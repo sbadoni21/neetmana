@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/search_page.dart';
 import 'package:matrimonial/services/user_service/user_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/user_card.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);
@@ -69,6 +71,7 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
                 SizedBox(
                   height: 8,
                 ),
+                _buildSearchBar()
               ],
             ),
           ),
@@ -106,5 +109,63 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
         ],
       ),
     );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => UserSearchPage()));
+            },
+            child: Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                color: Colors.white,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const Text(
+                            'Search',
+                            style: TextStyle(fontSize: 14.0),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          DefaultTextStyle(
+                            style: myTextStylefontsize12Black,
+                            child: AnimatedTextKit(
+                              isRepeatingAnimation: true,
+                              repeatForever: true,
+                              animatedTexts: [
+                                RotateAnimatedText(
+                                  'Doctors',
+                                ),
+                                RotateAnimatedText('Native Village'),
+                                RotateAnimatedText('Educational Background'),
+                                RotateAnimatedText('Cureent Location'),
+
+
+                              ],
+                              onTap: () {
+                                print("Tap Event");
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.search)
+                    ]),
+              ),
+            )));
   }
 }

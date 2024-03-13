@@ -31,18 +31,81 @@ class AuthenticationServices {
     }
   }
 
-  Future<bool> sendOTP(String email) async {
-    if (EmailValidator.validate(email)) {
-      try {
-        String otp = randomAlphaNumeric(6);
-        return true;
-      } catch (e) {
-        print('Failed to send OTP: $e');
-        return false;
+  Future<void> updateUserProfile({
+    required String uid,
+    String? displayName,
+    String? phoneNumber,
+    String? dob,
+    String? nativeVillage,
+    String? occupation,
+    String? currentLocation,
+    String? guardianName,
+    String? guardianNumber,
+    String? education,
+    File? userImage,
+  }) async {
+    try {
+      DocumentReference userRef = _fireStore.collection("users").doc(uid);
+      DocumentSnapshot userSnapshot = await userRef.get();
+
+      Map<String, dynamic> updatedFields = {};
+
+      if (displayName != null && displayName != userSnapshot['displayName']) {
+        updatedFields['displayName'] = displayName;
       }
-    } else {
-      print('Invalid email address');
-      return false;
+
+      if (phoneNumber != null && phoneNumber != userSnapshot['phoneNumber']) {
+        updatedFields['phoneNumber'] = phoneNumber;
+      }
+
+      if (dob != null && dob != userSnapshot['dob']) {
+        updatedFields['dob'] = dob;
+      }
+
+      if (nativeVillage != null &&
+          nativeVillage != userSnapshot['nativeVillage']) {
+        updatedFields['nativeVillage'] = nativeVillage;
+      }
+
+      if (occupation != null && occupation != userSnapshot['occupation']) {
+        updatedFields['occupation'] = occupation;
+      }
+
+      if (currentLocation != null &&
+          currentLocation != userSnapshot['currentLocation']) {
+        updatedFields['currentLocation'] = currentLocation;
+      }
+
+      if (guardianName != null &&
+          guardianName != userSnapshot['guardianName']) {
+        updatedFields['guardianName'] = guardianName;
+      }
+
+      if (guardianNumber != null &&
+          guardianNumber != userSnapshot['guardianNumber']) {
+        updatedFields['guardianNumber'] = guardianNumber;
+      }
+
+      if (education != null && education != userSnapshot['education']) {
+        updatedFields['education'] = education;
+      }
+
+      if (updatedFields.isNotEmpty) {
+        await userRef.update(updatedFields);
+      }
+
+      if (userImage != null) {
+        final Reference userStorageReference = _storage.ref().child(
+            'user_images/${randomAlphaNumeric(10)}/${DateTime.now().millisecondsSinceEpoch}_user.png');
+        final UploadTask userUploadTask =
+            userStorageReference.putFile(userImage);
+        TaskSnapshot taskSnapshot = await userUploadTask.whenComplete(() {});
+        String userPhotoURL = await taskSnapshot.ref.getDownloadURL();
+        updatedFields['photo'] = userPhotoURL;
+        await userRef.update({'photo': userPhotoURL});
+      }
+    } catch (e) {
+      print("Error updating user profile: $e");
     }
   }
 

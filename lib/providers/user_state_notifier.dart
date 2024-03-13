@@ -126,6 +126,50 @@ class UserStateNotifier extends StateNotifier<User?> {
       return null;
     }
   }
+Future<User?> profileEditingScreen({
+  required String uid,
+  String? displayName,
+  String? phoneNumber,
+  String? dob,
+  String? nativeVillage,
+  String? occupation,
+  String? currentLocation,
+  String? guardianName,
+  String? guardianNumber,
+  String? education,
+  File? userImage,
+}) async {
+  try {
+    // Update the user profile
+    await ref.read(authenticationServicesProvider).updateUserProfile(
+      uid: uid,
+      displayName: displayName,
+      phoneNumber: phoneNumber,
+      dob: dob,
+      nativeVillage: nativeVillage,
+      occupation: occupation,
+      currentLocation: currentLocation,
+      guardianName: guardianName,
+      guardianNumber: guardianNumber,
+      education: education,
+      userImage: userImage,
+    );
+
+    User? user = await fetchUserData(uid);
+
+    if (user != null) {
+      print('User profile updated successfully: ${user.displayName}');
+      return user;
+    } else {
+      print('Failed to fetch updated user data.');
+      return null;
+    }
+  } catch (e) {
+    print('Error updating user profile: $e');
+    return null;
+  }
+}
+
 }
 
 final userStateNotifierProvider =

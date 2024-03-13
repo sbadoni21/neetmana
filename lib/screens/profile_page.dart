@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/editprofile_page.dart';
 import 'package:matrimonial/screens/splashscreen.dart';
 import 'package:matrimonial/services/user_service/image_upload_service.dart';
 import 'package:matrimonial/utils/static.dart';
@@ -76,7 +77,6 @@ Future<void> _selectImage(ref) async {
       }
       setState() {
         _isLoading = true;
-        ;
       }
     }
   } else {
@@ -96,7 +96,6 @@ Future<void> _selectImage(ref) async {
     }
     setState() {
       _isLoading = true;
-      ;
     }
   }
 }
@@ -206,6 +205,33 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                               style: myTextStylefontsize16white,
                             ),
                           ),
+                        ),
+                        Positioned(
+                          left: 40,
+                          top: 190,
+                          child: GestureDetector(
+                              onTap: () async {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            EditProfilePage()));
+                              },
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.edit,
+                                    color: Colors.white,
+                                  ),
+                                  SizedBox(
+                                    width: 6,
+                                  ),
+                                  Text(
+                                    "Edit Profile",
+                                    style: myTextStylefontsize12white,
+                                  )
+                                ],
+                              )),
                         ),
                         Positioned(
                           right: 40,
@@ -682,7 +708,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 const Text('Guardian Number  :  '),
                                 Text(user.guardianNumber)
                               ],
-                            )
+                            ),
                           ],
                         ),
                       ),

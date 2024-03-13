@@ -7,10 +7,6 @@ import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/bubble.dart';
 
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
-
 class UserCard extends ConsumerStatefulWidget {
   final User user;
 
@@ -91,7 +87,7 @@ class _UserCardState extends ConsumerState<UserCard> {
                       child: widget.user.photoURL != "none"
                           ? Image.network(
                               widget.user.photoURL,
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                             )
                           : Image.asset(
                               'assets/images/placeholder_image.png'))),

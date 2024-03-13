@@ -29,7 +29,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   final List<Widget> _pages = [
     PeoplePage(),
-    SavedPreferences(),
+    const SavedPreferences(),
     ProfilePage(),
     ChatAppPage(),
   ];
@@ -50,6 +50,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            
             Text(
               'Niti Mana',
               style: myTextStylefontsize20White,

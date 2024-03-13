@@ -16,10 +16,8 @@ class User {
   final String guardianNumber;
   final String occupation;
   final String education;
-
   final List? savedUsers;
   final List? userImages;
-
   User(
       {required this.deviceToken,
       required this.displayName,
