@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/otherUser_detailpage.dart';
 import 'package:matrimonial/services/user_service/friend_request_service.dart';
 
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
+
 
 class RequestCard extends ConsumerStatefulWidget {
   final User user;

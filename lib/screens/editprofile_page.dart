@@ -6,8 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
-import 'package:matrimonial/screens/profile_page.dart';
-import 'package:matrimonial/services/profile/profileservices.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class EditProfilePage extends ConsumerStatefulWidget {
@@ -31,9 +30,12 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   final ImagePicker _imagePicker = ImagePicker();
   File? _userImage;
 
+  bool _isMounted = false; // Track whether the widget is mounted
+
   @override
   void initState() {
     super.initState();
+    _isMounted = true; // Widget is mounted
     final user = ref.read(userProvider);
     displayNameController.text = user?.displayName ?? '';
     phoneNumberController.text = user?.phoneNumber ?? '';
@@ -46,6 +48,21 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
     educationController.text = user?.education ?? '';
   }
 
+  @override
+  void dispose() {
+    _isMounted = false;
+
+    super.dispose();
+  }
+
+  void _updateUserImage(File? image) {
+    if (_isMounted) {
+      setState(() {
+        _userImage = image;
+      });
+    }
+  }
+
   Future<void> _selectImage() async {
     var status = await Permission.storage.status;
     if (!status.isGranted) {
@@ -55,9 +72,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           imageQuality: 85,
         );
         if (pickedFile != null) {
-          setState(() {
-            _userImage = File(pickedFile.path);
-          });
+          _updateUserImage(File(pickedFile.path));
         }
       } else {
         final XFile? pickedFile = await _imagePicker.pickImage(
@@ -65,9 +80,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
           imageQuality: 85,
         );
         if (pickedFile != null) {
-          setState(() {
-            _userImage = File(pickedFile.path);
-          });
+          _updateUserImage(File(pickedFile.path));
         }
       }
     } else {
@@ -76,9 +89,7 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
         imageQuality: 85,
       );
       if (pickedFile != null) {
-        setState(() {
-          _userImage = File(pickedFile.path);
-        });
+        _updateUserImage(File(pickedFile.path));
       }
     }
   }
@@ -87,112 +98,121 @@ class _EditProfilePageState extends ConsumerState<EditProfilePage> {
   Widget build(BuildContext context) {
     User? user = ref.read(userProvider);
     String _selectedDate = user!.dob;
-
+    bool isSaving = false;
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Profile'),
         actions: [
           ElevatedButton(
             onPressed: () {
+              setState(() {
+                isSaving = true;
+              });
               _saveChanges();
+              setState(() {
+                isSaving = false;
+              });
             },
-            child: Text('Save Changes'),
+            child: isSaving == true
+                ? CircularProgressIndicator()
+                : Text('Save Changes'),
           ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            _buildTextField(
-              controller: displayNameController,
-              labelText: 'Display Name',
-            ),
-            SizedBox(height: 10),
-            _buildTextField(
-              controller: phoneNumberController,
-              labelText: 'Phone Number',
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: dobController,
-              onTap: () async {
-                DateTime? selectedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (selectedDate != null) {
-                  setState(() {
-                    _selectedDate =
-                        DateFormat('dd/MM/yyyy').format(selectedDate);
-                    dobController.text = _selectedDate;
-                  });
-                }
-              },
-              decoration: InputDecoration(
-                labelText: 'Date of Birth (dd/mm/yyyy)',
-                hintText: 'Enter your date of birth',
-                prefixIcon:
-                    const Icon(Icons.calendar_today, color: Colors.grey),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(color: Colors.blue),
-                ),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 16.0, vertical: 14.0),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your date of birth';
-                }
+          padding: const EdgeInsets.all(16.0),
+          child: !isSaving
+              ? ListView(
+                  children: [
+                    _buildTextField(
+                      controller: displayNameController,
+                      labelText: 'Display Name',
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: phoneNumberController,
+                      labelText: 'Phone Number',
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: dobController,
+                      onTap: () async {
+                        DateTime? selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (selectedDate != null) {
+                          setState(() {
+                            _selectedDate =
+                                DateFormat('dd/MM/yyyy').format(selectedDate);
+                            dobController.text = _selectedDate;
+                          });
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Date of Birth (dd/mm/yyyy)',
+                        hintText: 'Enter your date of birth',
+                        prefixIcon: const Icon(Icons.calendar_today,
+                            color: Colors.grey),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide(color: Colors.blue),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 14.0),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your date of birth';
+                        }
 
-                try {
-                  DateFormat('dd/MM/yyyy').parseStrict(value);
-                  return null;
-                } catch (e) {
-                  return 'Invalid date format (dd/mm/yyyy)';
-                }
-              },
-            ),
-            SizedBox(height: 10),
-            _buildTextField(
-              controller: nativeVillageController,
-              labelText: 'Native Village',
-            ),
-            SizedBox(height: 10),
-            _buildTextField(
-              controller: occupationController,
-              labelText: 'Occupation',
-            ),
-            SizedBox(height: 20),
-            _buildImage(),
-            SizedBox(height: 20),
-            _buildTextField(
-              controller: guardianNameController,
-              labelText: 'Guardian Name',
-            ),
-            SizedBox(height: 10),
-            _buildTextField(
-              controller: guardianNumberController,
-              labelText: 'Guardian Number',
-            ),
-            SizedBox(height: 10),
-            _buildTextField(
-              controller: guardianNumberController,
-              labelText: 'Guardian Number',
-            ),
-            SizedBox(height: 10),
-            _buildTextField(
-              controller: educationController,
-              labelText: 'Education',
-            ),
-          ],
-        ),
-      ),
+                        try {
+                          DateFormat('dd/MM/yyyy').parseStrict(value);
+                          return null;
+                        } catch (e) {
+                          return 'Invalid date format (dd/mm/yyyy)';
+                        }
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: nativeVillageController,
+                      labelText: 'Native Village',
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: occupationController,
+                      labelText: 'Occupation',
+                    ),
+                    SizedBox(height: 20),
+                    _buildImage(),
+                    SizedBox(height: 20),
+                    _buildTextField(
+                      controller: guardianNameController,
+                      labelText: 'Guardian Name',
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: guardianNumberController,
+                      labelText: 'Guardian Number',
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: currentLocationController,
+                      labelText: 'Current Location',
+                    ),
+                    SizedBox(height: 10),
+                    _buildTextField(
+                      controller: educationController,
+                      labelText: 'Education',
+                    ),
+                  ],
+                )
+              : CircularProgressIndicator()),
     );
   }
 

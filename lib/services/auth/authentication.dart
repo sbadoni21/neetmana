@@ -17,6 +17,7 @@ class AuthenticationServices {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  
   Future<User?> signIn(String email, String password) async {
     try {
       UserCredential userCredential =

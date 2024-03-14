@@ -6,15 +6,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/editprofile_page.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/splashscreen.dart';
 import 'package:matrimonial/services/user_service/image_upload_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/heading_component.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
 final imageServiceProvider = ChangeNotifierProvider<ImageServices>((ref) {
   return ImageServices();
 });
@@ -161,7 +159,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final imageServices = ref.watch(imageServiceProvider);
     return Scaffold(
       body: _isLoading == true
-          ? CircularProgressIndicator()
+          ? const CircularProgressIndicator()
           : Center(
               child: ListView(
                 children: [
@@ -186,13 +184,13 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             width: 144,
                             height: 144,
                             decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(10),
-                              image: DecorationImage(
-                                fit: BoxFit.cover,
-                                image: NetworkImage(user!.photoURL),
-                              ),
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
+                            child: (user!.photoURL != "" &&
+                                    user.photoURL != 'none')
+                                ? Image.network(user.photoURL)
+                                : Image.asset(
+                                    'assets/images/placeholder_image.png'),
                           ),
                         ),
                         Positioned(
@@ -267,23 +265,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 user.occupation,
                                 style: myTextStylefontsize14White,
                               ),
-                              // const SizedBox(
-                              //   width: 10,
-                              // ),
-                              // Text(
-                              //   '$ageString years',
-                              //   style: myTextStylefontsize14White,
-                              // ),
-                              // const SizedBox(
-                              //   width: 10,
-                              // ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                user.currentLocation,
-                                style: myTextStylefontsize14White,
-                              )
                             ],
                           ),
                         ),
@@ -642,6 +623,37 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         );
                       }
                     },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20.0, 20, 20, 0),
+                    child: Card(
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const HeadingTitle(title: 'Personal Info'),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              children: [
+                                const Text('Current Address  :  '),
+                                Text(user.currentLocation)
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                const Text('Date of Birth:  '),
+                                Text(user.dob)
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20.0, 20, 20, 0),

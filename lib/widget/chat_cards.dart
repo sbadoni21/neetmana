@@ -4,9 +4,6 @@ import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/utils/static.dart';
 
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
 
 class ChatCard extends ConsumerStatefulWidget {
   final User user;

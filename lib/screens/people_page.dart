@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/search_page.dart';
 import 'package:matrimonial/services/user_service/user_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/user_card.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
+
 
 class PeoplePage extends ConsumerStatefulWidget {
   @override
@@ -152,9 +151,7 @@ class _PeoplePageState extends ConsumerState<PeoplePage> {
                                 ),
                                 RotateAnimatedText('Native Village'),
                                 RotateAnimatedText('Educational Background'),
-                                RotateAnimatedText('Cureent Location'),
-
-
+                                RotateAnimatedText('Current Location'),
                               ],
                               onTap: () {
                                 print("Tap Event");

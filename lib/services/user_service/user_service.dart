@@ -3,7 +3,6 @@ import 'package:matrimonial/models/user_model.dart';
 
 class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   Future<List<User>> getUsers(
     String currentUserId,
     String currentUserGender,
@@ -15,7 +14,12 @@ class UserService {
           .get();
 
       List<User> users = querySnapshot.docs
-          .where((doc) => doc.id != currentUserId && doc.exists)
+          .where((doc) =>
+              doc.id != currentUserId &&
+              doc.exists &&
+              (doc.data() as Map<String, dynamic>)
+                  .values
+                  .every((value) => value != null && value != ""))
           .map((doc) => User.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
 

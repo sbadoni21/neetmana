@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
-import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/otherUser_detailpage.dart';
 import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/utils/static.dart';
@@ -174,47 +174,3 @@ class _UserCardState extends ConsumerState<UserCard> {
     }
   }
 }
-
-
-
-//  Container(
-//         height: 100,
-//         child: ListTile(
-//           leading: CircleAvatar(
-//             radius: 30,
-//             backgroundImage: NetworkImage(widget.user.photoURL),
-//           ),
-//           title: Text(
-//             widget.user.displayName,
-//             style: myTextStylefontsize16,
-//           ),
-//           subtitle: Row(
-//             children: [
-//               Bubble(text: widget.user.occupation),
-//               SizedBox(
-//                 width: 4,
-//               ),
-//               Bubble(text: "$ageString years")
-//             ],
-//           ),
-//           trailing: 
-// IconButton(
-//             icon: isSaved
-//                 ? Icon(Icons.bookmark, color: Colors.red)
-//                 : Icon(Icons.bookmark_border_outlined),
-//             onPressed: () {
-//               isSaved
-//                   ? _onUnsaveButtonPressed(userService, currentUser)
-//                   : _onSaveButtonPressed(userService, currentUser);
-//             },
-//           ),
-//           onTap: () {
-//             Navigator.push(
-//               context,
-//               MaterialPageRoute(
-//                 builder: (context) => OtherUserProfilePage(user: widget.user),
-//               ),
-//             );
-//           },
-//         ),
-//       ),}

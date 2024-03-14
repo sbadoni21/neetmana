@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/image_fullscreen_page.dart';
 import 'package:matrimonial/services/user_service/chat_service.dart';
 import 'package:matrimonial/utils/static.dart';
@@ -15,10 +16,6 @@ import 'package:matrimonial/widget/chatbubble.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
-
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
 
 class ChatPage extends ConsumerStatefulWidget {
   const ChatPage({super.key, required this.otherUser});

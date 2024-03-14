@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
+import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/services/user_service/bookmark_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/saved_preference_tile.dart.dart';
 
-final userProvider = Provider<User?>((ref) {
-  return ref.watch(userStateNotifierProvider);
-});
+
 
 class SavedPreferences extends ConsumerStatefulWidget {
   const SavedPreferences({Key? key}) : super(key: key);
