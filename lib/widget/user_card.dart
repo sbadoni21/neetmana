@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:matrimonial/models/user_model.dart';
+import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/homepage.dart';
 import 'package:matrimonial/screens/otherUser_detailpage.dart';
 import 'package:matrimonial/services/user_service/bookmark_service.dart';
@@ -17,17 +18,13 @@ class UserCard extends ConsumerStatefulWidget {
 }
 
 class _UserCardState extends ConsumerState<UserCard> {
-  late bool isSaved = false;
-  final bookmarkService = BookmarkService();
+  bool isSaved = false;
+  late BookmarkService bookmarkService;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+    bookmarkService = BookmarkService();
     _checkIfUserIsSaved();
   }
 
@@ -49,8 +46,6 @@ class _UserCardState extends ConsumerState<UserCard> {
 
   @override
   Widget build(BuildContext context) {
-    final userService = BookmarkService();
-    final currentUser = ref.watch(userProvider);
     String ageString = calculateAgeString(widget.user.dob);
     return GestureDetector(
       onTap: () {
@@ -73,24 +68,29 @@ class _UserCardState extends ConsumerState<UserCard> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                height: 100,
+                width: 120,
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.elliptical(50, 50),
+                    topRight: Radius.elliptical(50, 50),
                   ),
-                  height: 100,
-                  width: 120,
-                  child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          bottomLeft: Radius.circular(20),
-                          bottomRight: Radius.elliptical(50, 50),
-                          topRight: Radius.elliptical(50, 50)),
-                      child: widget.user.photoURL != "none"
-                          ? Image.network(
-                              widget.user.photoURL,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
-                              'assets/images/placeholder_image.png'))),
+                  child: widget.user.photoURL != "none"
+                      ? Image.network(
+                          widget.user.photoURL,
+                          fit: BoxFit.cover,
+                        )
+                      : Image.asset(
+                          'assets/images/placeholder_image.png',
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
               const SizedBox(
                 width: 10,
               ),
@@ -114,8 +114,8 @@ class _UserCardState extends ConsumerState<UserCard> {
                             : Icon(Icons.bookmark_border_outlined),
                         onPressed: () {
                           isSaved
-                              ? _onUnsaveButtonPressed(userService, currentUser)
-                              : _onSaveButtonPressed(userService, currentUser);
+                              ? _onUnsaveButtonPressed(ref.read(userProvider))
+                              : _onSaveButtonPressed(ref.read(userProvider));
                         },
                       ),
                     ],
@@ -128,10 +128,6 @@ class _UserCardState extends ConsumerState<UserCard> {
                         width: 4,
                       ),
                       Bubble(text: "$ageString years"),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      // Bubble(text: '${widget.user.nativeVillage}'),
                     ],
                   ),
                 ],
@@ -143,23 +139,25 @@ class _UserCardState extends ConsumerState<UserCard> {
     );
   }
 
-  void _onSaveButtonPressed(
-      BookmarkService userService, User? currentUser) async {
+  void _onSaveButtonPressed(User? currentUser) async {
     if (currentUser != null) {
-      await userService.addSavedUser(currentUser.uid, widget.user.uid);
-      setState(() {
-        isSaved = true;
-      });
+      await bookmarkService.addSavedUser(currentUser.uid, widget.user.uid);
+      if (mounted) {
+        setState(() {
+          isSaved = true;
+        });
+      }
     }
   }
 
-  void _onUnsaveButtonPressed(
-      BookmarkService userService, User? currentUser) async {
+  void _onUnsaveButtonPressed(User? currentUser) async {
     if (currentUser != null) {
-      await userService.removeSavedUser(currentUser.uid, widget.user.uid);
-      setState(() {
-        isSaved = false;
-      });
+      await bookmarkService.removeSavedUser(currentUser.uid, widget.user.uid);
+      if (mounted) {
+        setState(() {
+          isSaved = false;
+        });
+      }
     }
   }
 
@@ -168,9 +166,11 @@ class _UserCardState extends ConsumerState<UserCard> {
     if (currentUser != null) {
       final saved =
           await bookmarkService.isUserSaved(currentUser.uid, widget.user.uid);
-      setState(() {
-        isSaved = saved;
-      });
+      if (mounted) {
+        setState(() {
+          isSaved = saved;
+        });
+      }
     }
   }
 }

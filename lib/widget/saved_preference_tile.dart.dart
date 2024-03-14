@@ -94,34 +94,8 @@ class _SavedPreferenceTilesState extends State<SavedPreferenceTiles> {
                 top: 215,
                 left: 10,
                 child: Bubble(
-                  text: '${widget.user.currentLocation}',
+                  text: '${widget.user.education}',
                 )),
-            // if (showAdditionalContent)
-            //   Positioned(
-            //     left: 10,
-            //     top: 245,
-            //     child: AnimatedContainer(
-            //       transformAlignment: Alignment.bottomCenter,
-            //       alignment: Alignment.topLeft,
-            //       duration: Duration(seconds: 1),
-            //       height: 80,
-            //       width: 150,
-            //       decoration: BoxDecoration(
-            //         borderRadius: BorderRadius.only(
-            //           bottomLeft: Radius.circular(10),
-            //         ),
-            //       ),
-            //       child: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.end,
-            //         children: [
-            //           Bubble(
-            //             text: '${widget.user.nativeVillage}',
-            //           ),
-            //           SizedBox(height: 4),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
           ],
         ),
       ),

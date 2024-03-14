@@ -188,7 +188,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             ),
                             child: (user!.photoURL != "" &&
                                     user.photoURL != 'none')
-                                ? Image.network(user.photoURL)
+                                ? Image.network(user.photoURL,  fit: BoxFit.cover,)
                                 : Image.asset(
                                     'assets/images/placeholder_image.png'),
                           ),

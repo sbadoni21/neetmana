@@ -7,10 +7,8 @@ import 'package:matrimonial/screens/people_page.dart';
 import 'package:matrimonial/screens/profile_page.dart';
 import 'package:matrimonial/screens/saved_preferences.dart';
 import 'package:matrimonial/utils/static.dart';
-import 'package:matrimonial/widget/bottomsheet.dart';
 import 'package:matrimonial/widget/custom_bottom_navbar.dart';
 import 'package:matrimonial/widget/friend_request_sheet.dart';
-import 'package:matrimonial/widget/heading_component.dart';
 
 final userProvider = Provider<User?>((ref) {
   return ref.watch(userStateNotifierProvider);

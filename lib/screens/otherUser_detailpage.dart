@@ -11,7 +11,6 @@ import 'package:matrimonial/services/user_service/image_upload_service.dart';
 import 'package:matrimonial/utils/static.dart';
 import 'package:matrimonial/widget/heading_component.dart';
 
-
 class OtherUserProfilePage extends ConsumerStatefulWidget {
   final User user;
 
@@ -148,13 +147,15 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                       width: 144,
                       height: 144,
                       decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
                         borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(widget.user.photoURL),
-                        ),
                       ),
+                      child: (widget.user.photoURL != "" &&
+                              widget.user.photoURL != 'none')
+                          ? Image.network(
+                              widget.user.photoURL,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset('assets/images/placeholder_image.png'),
                     ),
                   ),
                   Positioned(
@@ -186,13 +187,6 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                           '$ageString years',
                           style: myTextStylefontsize14White,
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          widget.user.currentLocation,
-                          style: myTextStylefontsize14White,
-                        )
                       ],
                     ),
                   ),
@@ -312,6 +306,40 @@ class _OtherUserProfilePageState extends ConsumerState<OtherUserProfilePage> {
                   }
                 },
               ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20.0, 20, 20, 0),
+              child: Card(
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const HeadingTitle(title: 'Personal Info'),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          const Text('Current Address  :  '),
+                          Text(widget.user.currentLocation)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          const Text('Date of Birth:  '),
+                          Text(widget.user.dob)
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 0, 20, 0),

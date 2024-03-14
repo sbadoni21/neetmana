@@ -45,6 +45,7 @@ class UserService {
           .where((user) =>
               user.displayName.toLowerCase().contains(query.toLowerCase()) ||
               user.phoneNumber.toLowerCase().contains(query.toLowerCase()) ||
+              user.occupation.toLowerCase().contains(query.toLowerCase()) ||
               user.education.toLowerCase().contains(query.toLowerCase()) ||
               user.guardianName.toLowerCase().contains(query.toLowerCase()) ||
               user.nativeVillage.toLowerCase().contains(query.toLowerCase()) ||
