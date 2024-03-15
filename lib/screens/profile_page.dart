@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:matrimonial/models/user_model.dart';
 import 'package:matrimonial/providers/user_state_notifier.dart';
 import 'package:matrimonial/screens/editprofile_page.dart';
 import 'package:matrimonial/screens/homepage.dart';
@@ -186,9 +185,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20.0),
                             ),
-                            child: (user!.photoURL != "" &&
-                                    user.photoURL != 'none')
-                                ? Image.network(user.photoURL,  fit: BoxFit.cover,)
+                            child: (user!.photoURL != 'none')
+                                ? Image.network(
+                                    user.photoURL,
+                                    fit: BoxFit.cover,
+                                  )
                                 : Image.asset(
                                     'assets/images/placeholder_image.png'),
                           ),
